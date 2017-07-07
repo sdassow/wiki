@@ -44,8 +44,9 @@ func (p *Page) Save() error {
 	return ioutil.WriteFile(filename, p.Body, 0600)
 }
 
-func LoadPage(title string, baseurl *url.URL) (*Page, error) {
-	filename := path.Join("data", title+".txt")
+// LoadPage ...
+func LoadPage(title string, datadir string, baseurl *url.URL) (*Page, error) {
+	filename := path.Join(datadir, title+".txt")
 	body, err := ioutil.ReadFile(filename)
 	if err != nil {
 		return nil, err
@@ -146,7 +147,7 @@ func (s *Server) EditHandler() httprouter.Handle {
 		}
 		baseurl := r.URL.ResolveReference(u)
 
-		page, err := LoadPage(title, baseurl)
+		page, err := LoadPage(title, s.config.data, baseurl)
 		if err != nil {
 			page = &Page{Title: title}
 		}
@@ -199,7 +200,7 @@ func (s *Server) ViewHandler() httprouter.Handle {
 		}
 		baseurl := r.URL.ResolveReference(u)
 
-		page, err := LoadPage(title, baseurl)
+		page, err := LoadPage(title, s.config.data, baseurl)
 		if err != nil {
 			u, err := url.Parse(fmt.Sprintf("../edit/%s", title))
 			if err != nil {
