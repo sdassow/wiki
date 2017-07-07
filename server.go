@@ -39,8 +39,8 @@ type Page struct {
 	HTML  template.HTML
 }
 
-func (p *Page) Save() error {
-	filename := path.Join("data", p.Title+".txt")
+func (p *Page) Save(datadir string) error {
+	filename := path.Join(datadir, p.Title+".txt")
 	return ioutil.WriteFile(filename, p.Body, 0600)
 }
 
@@ -172,7 +172,7 @@ func (s *Server) SaveHandler() httprouter.Handle {
 		body := r.Form.Get("body")
 
 		page := &Page{Title: title, Body: []byte(body)}
-		err = page.Save()
+		err = page.Save(s.config.data)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
