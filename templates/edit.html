@@ -1,6 +1,33 @@
-<h1>Editing {{.Title}}</h1>
+<html>
+  <head>
+    <!-- Google Fonts -->
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:300,300italic,700,700italic">
 
-<form action="/save/{{.Title}}" method="POST">
-<div><textarea name="body" rows="20" cols="80">{{printf "%s" .Body}}</textarea></div>
-<div><input type="submit" value="Save"></div>
-</form>
+    <!-- CSS Reset -->
+    <link rel="stylesheet" href="//cdn.rawgit.com/necolas/normalize.css/master/normalize.css">
+
+    <!-- Milligram CSS minified -->
+    <link rel="stylesheet" href="//cdn.rawgit.com/milligram/milligram/master/dist/milligram.min.css">
+
+    <style>
+      textarea {
+        min-height: 24rem;
+      }
+    </style>
+  </head>
+<body>
+  <div class="container">
+    <div class="row">
+      <div class="column column-50">
+        <form action="/save/{{.Title}}" method="POST">
+          <fieldset>
+            <label for="bodyField">Editing {{.Title}}</label>
+            <textarea id="bodyField" name="body">{{printf "%s" .Body}}</textarea>
+          </fieldset>
+          <input class="button-primary" type="submit" value="Save">
+        </form>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
