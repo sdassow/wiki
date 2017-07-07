@@ -124,8 +124,5 @@ func main() {
 	http.HandleFunc("/edit/", makeHandler(editHandler))
 	http.HandleFunc("/save/", makeHandler(saveHandler))
 
-	css := http.StripPrefix("/css/", http.FileServer(http.Dir("static/css/")))
-	http.Handle("/css/", css)
-
 	log.Fatal(http.ListenAndServe(":8000", nil))
 }
