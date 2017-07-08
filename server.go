@@ -246,6 +246,8 @@ func (s *Server) initRoutes() {
 	s.router.Handler("GET", "/debug/metrics", exp.ExpHandler(s.counters.r))
 	s.router.GET("/debug/stats", s.StatsHandler())
 
+	s.router.ServeFiles("/css/*filepath", http.Dir("./static/css"))
+
 	s.router.GET("/", s.IndexHandler())
 	s.router.GET("/view/:title", s.ViewHandler())
 	s.router.GET("/edit/:title", s.EditHandler())
