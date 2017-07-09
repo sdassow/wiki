@@ -2,7 +2,6 @@ package main
 
 import (
 	"testing"
-	"time"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -18,5 +17,5 @@ func TestConfig(t *testing.T) {
 	assert := assert.New(t)
 
 	cfg := Config{data: "/data"}
-	assert.Equal(cfg.fqdn, "/data")
+	assert.Equal(cfg.data, "/data")
 }
