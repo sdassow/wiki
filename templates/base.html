@@ -1,0 +1,27 @@
+{{define "base"}}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="/css/spectre-icons.min.css">
+    <link rel="stylesheet" href="/css/spectre.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{{.Title}}</title>
+  </head>
+<body>
+  <section class="container grid-960 mt-10">
+    <header class="navbar">
+      <section class="navbar-section">
+        <a href="/" class="navbar-brand mr-10">Wiki</a>
+      </section>
+      <section class="navbar-section">
+        <div class="input-group input-inline">
+          <input class="form-input" type="text" placeholder="search" />
+          <button class="btn btn-primary input-group-btn">Search</button>
+        </div>
+      </section>
+    </header>
+    {{template "content" .}}
+  </section>
+</body>
+</html>
+{{end}}

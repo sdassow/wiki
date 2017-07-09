@@ -24,7 +24,6 @@ import (
 	"github.com/microcosm-cc/bluemonday"
 	"github.com/patrickmn/go-cache"
 	"github.com/russross/blackfriday"
-	"go.iondynamics.net/templice"
 )
 
 var (
@@ -102,7 +101,7 @@ type Server struct {
 	bind      string
 	config    Config
 	store     *cache.Cache
-	templates *templice.Template
+	templates *Templates
 	router    *httprouter.Router
 
 	// Logger
@@ -113,8 +112,13 @@ type Server struct {
 	stats    *stats.Stats
 }
 
-func (s *Server) render(w http.ResponseWriter, tmpl string, data interface{}) {
-	err := s.templates.ExecuteTemplate(w, tmpl+".html", data)
+func (s *Server) render(name string, w http.ResponseWriter, ctx interface{}) {
+	buf, err := s.templates.Exec(name, ctx)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+
+	_, err = buf.WriteTo(w)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
@@ -152,7 +156,7 @@ func (s *Server) EditHandler() httprouter.Handle {
 			page = &Page{Title: title}
 		}
 
-		s.render(w, "edit", page)
+		s.render("edit", w, page)
 	}
 }
 
@@ -214,7 +218,7 @@ func (s *Server) ViewHandler() httprouter.Handle {
 			return
 		}
 
-		s.render(w, "view", page)
+		s.render("view", w, page)
 	}
 }
 
@@ -263,7 +267,7 @@ func NewServer(bind string, config Config) *Server {
 		bind:      bind,
 		config:    config,
 		router:    httprouter.New(),
-		templates: templice.New(rice.MustFindBox("templates")),
+		templates: NewTemplates("base"),
 
 		// Logger
 		logger: logger.New(logger.Options{
@@ -277,10 +281,26 @@ func NewServer(bind string, config Config) *Server {
 		stats:    stats.New(),
 	}
 
-	err := server.templates.Load()
-	if err != nil {
-		log.Panicf("error loading templates: %s", err)
-	}
+	// Templates
+	box := rice.MustFindBox("templates")
+
+	editTemplate := template.New("view")
+	template.Must(editTemplate.Parse(box.MustString("edit.html")))
+	template.Must(editTemplate.Parse(box.MustString("base.html")))
+
+	viewTemplate := template.New("view")
+	template.Must(viewTemplate.Parse(box.MustString("view.html")))
+	template.Must(viewTemplate.Parse(box.MustString("base.html")))
+
+	server.templates.Add("edit", editTemplate)
+	server.templates.Add("view", viewTemplate)
+
+	/*
+		err := server.templates.Load()
+		if err != nil {
+			log.Panicf("error loading templates: %s", err)
+		}
+	*/
 
 	server.initRoutes()
 
