@@ -271,7 +271,7 @@ func NewServer(bind string, config Config) *Server {
 
 		// Logger
 		logger: logger.New(logger.Options{
-			Prefix:               "pastebin",
+			Prefix:               "wiki",
 			RemoteAddressHeaders: []string{"X-Forwarded-For"},
 			OutputFlags:          log.LstdFlags,
 		}),
