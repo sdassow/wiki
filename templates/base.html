@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="/css/spectre.min.css">
     {{ template "stylesheets" . }}
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    {{ template "css" . }}
     <title>{{.Title}}</title>
   </head>
 <body>
@@ -27,5 +28,6 @@
 {{ template "scripts" . }}
 </html>
 {{end}}
+{{ define "css" }}{{ end }}
 {{ define "scripts" }}{{ end }}
 {{ define "stylesheets" }}{{ end }}
