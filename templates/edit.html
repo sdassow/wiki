@@ -8,11 +8,11 @@
       <form action="/save/{{.Title}}" method="POST">
         <div class="form-group">
           <label class="form-label" for="input-body">Editing: {{.Title}}</label>
-          <textarea class="form-input" id="input-body" name="body" placeholder="Enter content here..." rows="24">{{printf "%s" .Body}}</textarea>
+          <textarea class="form-input" id="input-body" name="body" placeholder="Enter content here..." cols="80" rows="24">{{printf "%s" .Body}}</textarea>
         </div>
         <div class="form-group">
           <button class="btn btn-sm btn-primary" type="submit">Save</button>
-          <button class="btn btn-sm btn-link" type="reset">Cancel</button>
+          <a class="btn btn-sm btn-link" href="/view/{{.Title}}">Cancel</a>
         </div>
       </form>
     </div>
