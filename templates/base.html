@@ -4,6 +4,7 @@
   <head>
     <link rel="stylesheet" href="/css/spectre-icons.min.css">
     <link rel="stylesheet" href="/css/spectre.min.css">
+    {{ template "stylesheets" . }}
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{{.Title}}</title>
   </head>
@@ -23,5 +24,8 @@
     {{template "content" .}}
   </section>
 </body>
+{{ template "scripts" . }}
 </html>
 {{end}}
+{{ define "scripts" }}{{ end }}
+{{ define "stylesheets" }}{{ end }}

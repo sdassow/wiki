@@ -255,6 +255,11 @@ func (s *Server) initRoutes() {
 		rice.MustFindBox("static/css").HTTPBox(),
 	)
 
+	s.router.ServeFiles(
+		"/js/*filepath",
+		rice.MustFindBox("static/js").HTTPBox(),
+	)
+
 	s.router.GET("/", s.IndexHandler())
 	s.router.GET("/view/:title", s.ViewHandler())
 	s.router.GET("/edit/:title", s.EditHandler())

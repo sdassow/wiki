@@ -2,6 +2,7 @@
 
 * blah
 * blah
+* foo bar baz
 
 Check out: https://github.com/prologic
 
