@@ -22,7 +22,6 @@ import (
 	"github.com/GeertJohan/go.rice"
 	"github.com/julienschmidt/httprouter"
 	"github.com/microcosm-cc/bluemonday"
-	"github.com/patrickmn/go-cache"
 	"github.com/russross/blackfriday"
 )
 
@@ -100,7 +99,6 @@ func (c *Counters) DecBy(name string, n int64) {
 type Server struct {
 	bind      string
 	config    Config
-	store     *cache.Cache
 	templates *Templates
 	router    *httprouter.Router
 
