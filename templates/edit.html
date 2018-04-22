@@ -25,11 +25,11 @@
 <script>
 $(document).ready(function() {
   var simplemde = new SimpleMDE({
-      element: $("#indput-body")[0],
+      element: $("#input-body")[0],
       autofocus: true,
       autosave: {
           enabled: true,
-          uniqueId: "wiki", // TODO: Make this configurable?
+          uniqueId: "wiki-{{.Title}}", // TODO: Make this configurable?
           delay: 1000,
       },
       forceSync: true,
