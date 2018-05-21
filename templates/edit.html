@@ -1,5 +1,5 @@
 {{define "stylesheets"}}
-<link rel="stylesheet" href="/css/simplemde.min.css">
+<link rel="stylesheet" href="/css/easymde.min.css">
 {{end}}
 {{define "content"}}
 <section class="container">
@@ -21,10 +21,10 @@
 {{end}}
 {{define "scripts"}}
 <script src="/js/jquery.slim.min.js"></script>
-<script src="/js/simplemde.min.js"></script>
+<script src="/js/easymde.min.js"></script>
 <script>
 $(document).ready(function() {
-  var simplemde = new SimpleMDE({
+  var simplemde = new EasyMDE({
       element: $("#input-body")[0],
       autofocus: true,
       autosave: {
