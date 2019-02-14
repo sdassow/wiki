@@ -8,7 +8,7 @@ lets you create and share content in Markdown format.
 ### Source
 
 ```#!bash
-$ go install github.com/prologic/wiki/...
+$ go get github.com/prologic/wiki
 ```
 
 ## Usage
