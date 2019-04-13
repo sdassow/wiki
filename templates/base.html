@@ -1,14 +1,16 @@
 {{define "base"}}
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <link rel="stylesheet" href="/css/spectre-icons.min.css">
-    <link rel="stylesheet" href="/css/spectre.min.css">
-    {{ template "stylesheets" . }}
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    {{ template "css" . }}
-    <title>{{.Title}}</title>
-  </head>
+
+<head>
+  <link rel="stylesheet" href="/css/spectre-icons.min.css">
+  <link rel="stylesheet" href="/css/spectre.min.css">
+  {{ template "stylesheets" . }}
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  {{ template "css" . }}
+  <title>{{.Title}}</title>
+</head>
+
 <body>
   <section class="container grid-960 mt-10">
     <header class="navbar">
@@ -17,15 +19,93 @@
       </section>
       <section class="navbar-section">
         <div class="input-group input-inline">
-          <input class="form-input" type="text" placeholder="search" />
-          <button class="btn btn-primary input-group-btn">Search</button>
+          <input id="search" class="form-input" type="text" placeholder="search" onkeypress="return handleKeys(event)" />
+          <button class="btn btn-primary input-group-btn" onclick="onSearch()">Search</button>
         </div>
       </section>
     </header>
     {{template "content" .}}
   </section>
+<section>
+  <div class="modal modal-lg" id="searchResultsContainer">
+    <a href="#close" class="modal-overlay" aria-label="Close" onclick="closeModal()"></a>
+    <div class="modal-container" role="document">
+      <div class="modal-header">
+        <a href="#close" class="btn btn-clear float-right" aria-label="Close" onclick="closeModal()"></a>
+        <div class="modal-title h5">Search Results</div>
+      </div>
+      <div class="modal-body">
+        <div class="content" id="searchResultsDetails">
+          
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 </body>
+<script lang="application/javascript">
+  function handleKeys(event) {
+    if (event.which == 13 || event.keyCode == 13) {
+        onSearch()
+        return false;
+    }
+    return true;
+  }
+  function closeModal() {
+    var container = document.getElementById("searchResultsContainer")
+      container.classList.remove("active")
+  }
+  function onSearchError(event) {
+    alert("Search Error")
+  }
+  function onSearchComplete(event) {
+    results = JSON.parse(this.responseText)
+    if (results.Error != null) {
+      alert("Search Error: " + resutls.Error)
+    } else if (results.Hits.length == 0) {
+      alert("No resuts")
+    } else {
+      //TODO: show results with options to click
+      //alert("Search Complete: " + results.Hits.length)
+
+      var container = document.getElementById("searchResultsContainer")
+      container.classList.add("active")
+
+      var dataResults = document.getElementById("searchResultsDetails")
+      while(dataResults.hasChildNodes()) { dataResults.removeChild(dataResults.lastChild) }
+
+      for (var i = 0; i < results.Hits.length; i++) {
+        var hit = results.Hits[i]
+        var card = document.createElement("div")
+        card.classList.add("card")
+        var cardBody = document.createElement("div")
+        cardBody.classList.add("card-body")
+        var lnk = document.createElement("a")        
+        lnk.href = hit.Page
+        lnk.title = hit.Title
+        lnk.appendChild(document.createTextNode(hit.Title))
+        cardBody.appendChild(lnk)
+        card.appendChild(cardBody)        
+        dataResults.appendChild(card)
+      }
+    
+    }
+  }
+
+  function onSearch() {
+    var xReq = new XMLHttpRequest();
+    var url = "/search";
+    var searchValue = document.getElementById("search").value
+    var params = "search=" + encodeURIComponent(searchValue);
+    xReq.open("POST", url, true);
+    xReq.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xReq.addEventListener("load", onSearchComplete)
+    xReq.addEventListener("error", onSearchError)
+    xReq.send(params);
+  }
+</script>
 {{ template "scripts" . }}
+
 </html>
 {{end}}
 {{ define "css" }}{{ end }}

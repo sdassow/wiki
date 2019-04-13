@@ -233,6 +233,22 @@ func (s *Server) StatsHandler() httprouter.Handle {
 	}
 }
 
+// SearchHandler - handles searching for text in the wiki
+func (s *Server) SearchHandler() httprouter.Handle {
+	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
+		if err := r.ParseForm(); err != nil {
+			s.logger.Printf("ERROR: %s\n", err.Error())
+			http.Error(w, "Internal Error", http.StatusInternalServerError)
+		}
+		bs, err := json.Marshal(s.DoSearch(r.FormValue("search")))
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+		w.Write(bs)
+	}
+}
+
 // ListenAndServe ...
 func (s *Server) ListenAndServe() {
 	log.Fatal(
@@ -263,6 +279,7 @@ func (s *Server) initRoutes() {
 	s.router.GET("/view/:title", s.ViewHandler())
 	s.router.GET("/edit/:title", s.EditHandler())
 	s.router.POST("/save/:title", s.SaveHandler())
+	s.router.POST("/search", s.SearchHandler())
 }
 
 // NewServer ...
