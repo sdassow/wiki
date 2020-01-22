@@ -1,5 +1,9 @@
-wiki
-rice-box.go
-wiki.exe
-debug
-debug.test
+*~
+*.bak
+
+/dist
+/wiki
+/rice-box.go
+/wiki.exe
+/debug
+/debug.test
