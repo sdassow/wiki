@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"os"
 	"path"
 	"regexp"
 
@@ -36,6 +37,7 @@ type Page struct {
 	Body  []byte
 	HTML  template.HTML
 	Brand string
+	Date  time.Time
 }
 
 func (p *Page) Save(datadir string) error {
@@ -50,6 +52,11 @@ func LoadPage(title string, config Config, baseurl *url.URL) (*Page, error) {
 	if err != nil {
 		return nil, err
 	}
+	fi, err := os.Stat(filename)
+	if err != nil {
+		return nil, err
+	}
+	mtime := fi.ModTime()
 
 	// Process and Parse the Markdown content
 	// Also automatically replace CamelCase page identifiers as links
@@ -66,6 +73,7 @@ func LoadPage(title string, config Config, baseurl *url.URL) (*Page, error) {
 		Body:  body,
 		HTML:  template.HTML(html),
 		Brand: config.brand,
+		Date:  mtime,
 	}, nil
 }
 
