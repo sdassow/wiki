@@ -20,12 +20,11 @@
 </section>
 {{end}}
 {{define "scripts"}}
-<script src="/js/jquery.slim.min.js"></script>
 <script src="/js/easymde.min.js"></script>
 <script>
-$(document).ready(function() {
+(function() {
   var simplemde = new EasyMDE({
-      element: $("#input-body")[0],
+      element: document.getElementById("input-body"),
       autofocus: true,
       autosave: {
           enabled: true,
@@ -37,6 +36,6 @@ $(document).ready(function() {
       promptURLs: true,
       tabSize: 4,
   });
-});
+})();
 </script>
 {{end}}
