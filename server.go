@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"html/template"
 	"io/ioutil"
@@ -11,6 +12,7 @@ import (
 	"os"
 	"path"
 	"regexp"
+	"strings"
 
 	// Logging
 	"github.com/unrolled/logger"
@@ -40,9 +42,25 @@ type Page struct {
 	Date  time.Time
 }
 
+// make sure user input path does not leave the directory
+func mkSubDir(dir string, file string) error {
+	d := path.Clean(dir)
+	sd := path.Dir(path.Clean(path.Join(d, file)))
+	if sd[ 0:len(d) ] != d {
+		return errors.New("File in wrong directory")
+	}
+	return os.MkdirAll(sd, 0755)
+}
+
 func (p *Page) Save(datadir string) error {
-	filename := path.Join(datadir, p.Title+".txt")
-	return ioutil.WriteFile(filename, p.Body, 0600)
+	filename := p.Title + FileExtension
+	filepath := path.Join(datadir, filename)
+
+	if err := mkSubDir(datadir, filename); err != nil {
+		return err
+	}
+
+	return ioutil.WriteFile(filepath, p.Body, 0600)
 }
 
 // LoadPage ...
@@ -150,9 +168,9 @@ func (s *Server) EditHandler() httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		s.counters.Inc("n_edit")
 
-		title := p.ByName("title")
+		title := strings.TrimLeft(p.ByName("title"), "/")
 
-		u, err := url.Parse("../view/")
+		u, err := url.Parse("/view/")
 		if err != nil {
 			http.Error(w, "Internal Error", http.StatusInternalServerError)
 		}
@@ -172,7 +190,7 @@ func (s *Server) SaveHandler() httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		s.counters.Inc("n_save")
 
-		title := p.ByName("title")
+		title := strings.TrimLeft(p.ByName("title"), "/")
 
 		err := r.ParseForm()
 		if err != nil {
@@ -203,9 +221,9 @@ func (s *Server) ViewHandler() httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		s.counters.Inc("n_view")
 
-		title := p.ByName("title")
+		title := strings.TrimLeft(p.ByName("title"), "/")
 
-		u, err := url.Parse("../view/")
+		u, err := url.Parse("/view/")
 		if err != nil {
 			http.Error(w, "Internal Error", http.StatusInternalServerError)
 		}
@@ -213,7 +231,7 @@ func (s *Server) ViewHandler() httprouter.Handle {
 
 		page, err := LoadPage(title, s.config, baseurl)
 		if err != nil {
-			u, err := url.Parse(fmt.Sprintf("../edit/%s", title))
+			u, err := url.Parse(fmt.Sprintf("/edit/%s", title))
 			if err != nil {
 				http.Error(w, "Internal Error", http.StatusInternalServerError)
 			}
@@ -284,9 +302,9 @@ func (s *Server) initRoutes() {
 	)
 
 	s.router.GET("/", s.IndexHandler())
-	s.router.GET("/view/:title", s.ViewHandler())
-	s.router.GET("/edit/:title", s.EditHandler())
-	s.router.POST("/save/:title", s.SaveHandler())
+	s.router.GET("/view/*title", s.ViewHandler())
+	s.router.GET("/edit/*title", s.EditHandler())
+	s.router.POST("/save/*title", s.SaveHandler())
 	s.router.POST("/search", s.SearchHandler())
 }
 

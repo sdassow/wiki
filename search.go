@@ -4,6 +4,7 @@ import (
 	"io/ioutil"
 	"path/filepath"
 	"strings"
+	"os"
 
 	"golang.org/x/text/language"
 	"golang.org/x/text/search"
@@ -32,32 +33,32 @@ func (s *Server) DoSearch(term string) *SearchResults {
 	results := &SearchResults{}
 	results.Term = term
 	results.Hits = make([]*SearchHit, 0)
-	files, err := ioutil.ReadDir(s.config.data)
-	if err != nil {
-		s.logger.Printf("ERROR Reading Data Folder: %s\n", err.Error())
-		results.Error = err
-		return results
-	}
-	for _, f := range files {
-		fullFile := filepath.Join(s.config.data, f.Name())
-		if filepath.Ext(fullFile) == ".txt" {
+
+	err := filepath.Walk(s.config.data, func(fullFile string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		if info.IsDir() && info.Name() == ".git" {
+			return filepath.SkipDir
+		}
+
+		if filepath.Ext(fullFile) == FileExtension {
 			hit, err := checkFile(term, fullFile)
 			if err != nil {
 				s.logger.Printf("ERROR Reading File[%s]: %s\n", fullFile, err.Error())
 			}
 			if hit != nil {
-				hit.Title = f.Name()
-				hit.Title = hit.Title[:len(hit.Title)-4]
-				hit.Page, _ = filepath.Rel(s.config.data, hit.Page)
-				n := strings.IndexByte(hit.Page, '.')
-				if n > 0 {
-					hit.Page = "/view/" + hit.Page[:n] + "/"
-				} else {
-					hit.Page = "/view/" + hit.Page + "/"
-				}
+				relFile, _ := filepath.Rel(s.config.data, fullFile)
+				hit.Title = strings.TrimSuffix(relFile, FileExtension)
+				hit.Page = "/view/" + hit.Title
 				results.Hits = append(results.Hits, hit)
 			}
 		}
+
+		return nil
+	} )
+	if err != nil {
+		s.logger.Printf("ERROR Walking Directory[%s]: %s\n", s.config.data, err.Error())
 	}
 	return results
 }
