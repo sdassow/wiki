@@ -47,7 +47,7 @@ func (p *Page) Save(datadir string) error {
 
 // LoadPage ...
 func LoadPage(title string, config Config, baseurl *url.URL) (*Page, error) {
-	filename := path.Join(config.data, title+".txt")
+	filename := path.Join(config.data, title + FileExtension)
 	body, err := ioutil.ReadFile(filename)
 	if err != nil {
 		return nil, err

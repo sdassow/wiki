@@ -40,7 +40,7 @@ func generateTestData(folder string) []string {
 
 	numFiles := r.Intn(5) + 1
 	for i := 0; i <= numFiles; i++ {
-		fileName := dictionary[r.Intn(dicSize)] + ".txt"
+		fileName := dictionary[r.Intn(dicSize)] + FileExtension
 		filePath := filepath.Join(folder, fileName)
 		file, err := os.Create(filePath)
 		if err != nil {
