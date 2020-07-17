@@ -30,7 +30,7 @@ import (
 )
 
 var (
-	validPage = regexp.MustCompile("([A-Z][a-z]+[A-Z][a-zA-Z]+)")
+	validPage = regexp.MustCompile("([^[]|^)([A-Z][a-z]+[A-Z][a-zA-Z]+)")
 	validPath = regexp.MustCompile("^/(edit|save|view)/([a-zA-Z0-9]+)$")
 )
 
@@ -81,7 +81,7 @@ func LoadPage(title string, config Config, baseurl *url.URL) (*Page, error) {
 	// Also automatically replace CamelCase page identifiers as links
 	markdown := validPage.ReplaceAll(
 		body,
-		[]byte(fmt.Sprintf("[$1](%s$1)", baseurl.String())),
+		[]byte(fmt.Sprintf("$1[$2](%s$2)", baseurl.String())),
 	)
 
 	unsafe := blackfriday.MarkdownCommon(markdown)
