@@ -26,11 +26,10 @@ import (
 	"github.com/GeertJohan/go.rice"
 	"github.com/julienschmidt/httprouter"
 	"github.com/microcosm-cc/bluemonday"
-	"github.com/russross/blackfriday"
+	"github.com/russross/blackfriday/v2"
 )
 
 var (
-	validPage = regexp.MustCompile("([^[]|^)([A-Z][a-z]+[A-Z][a-zA-Z]+)")
 	validPath = regexp.MustCompile("^/(edit|save|view)/([a-zA-Z0-9]+)$")
 )
 
@@ -79,12 +78,9 @@ func LoadPage(title string, config Config, baseurl *url.URL) (*Page, error) {
 
 	// Process and Parse the Markdown content
 	// Also automatically replace CamelCase page identifiers as links
-	markdown := validPage.ReplaceAll(
-		body,
-		[]byte(fmt.Sprintf("$1[$2](%s$2)", baseurl.String())),
-	)
+	markdown := AutoCamelCase(body, baseurl.String())
 
-	unsafe := blackfriday.MarkdownCommon(markdown)
+	unsafe := blackfriday.Run(markdown, blackfriday.WithNoExtensions())
 	html := bluemonday.UGCPolicy().SanitizeBytes(unsafe)
 
 	return &Page{
