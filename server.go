@@ -195,7 +195,8 @@ func (s *Server) SaveHandler() httprouter.Handle {
 			return
 		}
 
-		body := r.Form.Get("body")
+		// get body and sanitize newlines
+		body := CleanNewlines(r.Form.Get("body"))
 
 		page := &Page{Title: title, Body: []byte(body), Brand: s.config.brand}
 		err = page.Save(s.config.data)

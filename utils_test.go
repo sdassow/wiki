@@ -28,3 +28,25 @@ func TestAutoCamelCase(t *testing.T) {
 	}
 
 }
+
+func TestCleanNewlines(t *testing.T) {
+	checks := []struct {
+		in  string
+		out string
+	}{
+		{"foo\r\nbar\r\nbaz\r\n", "foo\nbar\nbaz\n"},
+		{"foo\rbar\rbaz\r", "foo\nbar\nbaz\n"},
+		{"foo\nbar\nbaz\n", "foo\nbar\nbaz\n"},
+		{"foo\nbar\nbaz", "foo\nbar\nbaz\n"},
+		{"foo\r\nbar\nbaz\r", "foo\nbar\nbaz\n"},
+		{"foo\nbar\rbaz\n\n", "foo\nbar\nbaz\n\n"},
+	}
+
+	for _, check := range checks {
+		out := CleanNewlines(check.in)
+		if string(out) != check.out {
+			t.Errorf("mismatch:\n  <%s>\n  !=\n  <%s>", out, check.out)
+		}
+	}
+
+}
