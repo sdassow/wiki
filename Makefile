@@ -3,11 +3,10 @@
 all: dev
 
 dev: build
-	./wiki
+	./wiki --data ./checkout/ --repo ./repo.git/
 
 build: clean
-	go get ./...
-	go build .
+	go build
 
 release:
 	@./tools/release.sh
