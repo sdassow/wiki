@@ -5,6 +5,7 @@ import (
 	"os"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"strings"
 )
 
 var (
@@ -31,11 +32,16 @@ func main() {
 	rootCmd.PersistentFlags().StringVarP(&cfg.bind, "bind", "b", "0.0.0.0:8000", "[int]:<port> to bind to")
 	rootCmd.PersistentFlags().StringVarP(&cfg.brand, "brand", "", "Wiki", "branding at top of each page")
 	rootCmd.PersistentFlags().StringVarP(&cfg.data, "data", "", "./data", "path to data")
-	rootCmd.PersistentFlags().StringVarP(&cfg.repo, "repo", "", "", "url to git repository")
+	rootCmd.PersistentFlags().StringVarP(&cfg.git.url, "git-url", "", "", "url to git repository")
+	rootCmd.PersistentFlags().BoolVarP(&cfg.git.push, "git-push", "", true, "push to git repository")
+
+	viper.SetEnvKeyReplacer(strings.NewReplacer("-", "_"))
+
 	viper.BindPFlag("bind", rootCmd.PersistentFlags().Lookup("bind"))
 	viper.BindPFlag("brand", rootCmd.PersistentFlags().Lookup("brand"))
 	viper.BindPFlag("data", rootCmd.PersistentFlags().Lookup("data"))
-	viper.BindPFlag("repo", rootCmd.PersistentFlags().Lookup("repo"))
+	viper.BindPFlag("git-url", rootCmd.PersistentFlags().Lookup("git-url"))
+	viper.BindPFlag("git-push", rootCmd.PersistentFlags().Lookup("git-push"))
 
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
@@ -61,5 +67,6 @@ func initConfig() {
 	cfg.bind = viper.GetString("bind")
 	cfg.brand = viper.GetString("brand")
 	cfg.data = viper.GetString("data")
-	cfg.repo = viper.GetString("repo")
+	cfg.git.url = viper.GetString("git-url")
+	cfg.git.push = viper.GetBool("git-push")
 }
