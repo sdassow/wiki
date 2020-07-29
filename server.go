@@ -80,7 +80,7 @@ func LoadPage(title string, config Config, baseurl *url.URL) (*Page, error) {
 	// Also automatically replace CamelCase page identifiers as links
 	markdown := AutoCamelCase(body, baseurl.String())
 
-	unsafe := blackfriday.Run(markdown, blackfriday.WithNoExtensions())
+	unsafe := blackfriday.Run(markdown, blackfriday.WithExtensions(blackfriday.CommonExtensions | blackfriday.NoEmptyLineBeforeBlock))
 	html := bluemonday.UGCPolicy().SanitizeBytes(unsafe)
 
 	return &Page{
