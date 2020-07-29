@@ -22,7 +22,13 @@ func main() {
 		Long: "wiki is a self-hosted well uh wiki engine or content management system that lets you create and share content in Markdown format.",
 		Run: func(cmd *cobra.Command, args []string) {
 			fmt.Printf("Starting on %s...\n", cfg.bind)
-			NewServer(cfg).ListenAndServe()
+
+			srv, err := NewServer(cfg)
+			if err != nil {
+				fmt.Println(err)
+				os.Exit(1)
+			}
+			srv.ListenAndServe()
 		},
 	}
 

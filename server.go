@@ -52,15 +52,28 @@ func mkSubDir(dir string, file string) error {
 	return os.MkdirAll(sd, 0755)
 }
 
-func (p *Page) Save(datadir string) error {
+func (s *Server) Save(p *Page, msg string) error {
 	filename := p.Title + FileExtension
-	filepath := path.Join(datadir, filename)
+	filepath := path.Join(s.config.data, filename)
 
-	if err := mkSubDir(datadir, filename); err != nil {
+	if err := mkSubDir(s.config.data, filename); err != nil {
+		log.Println("mkdir:", err)
 		return err
 	}
 
-	return ioutil.WriteFile(filepath, p.Body, 0600)
+	if err := ioutil.WriteFile(filepath, p.Body, 0600); err != nil {
+		log.Println("write file:", filepath)
+		return err
+	}
+
+	if (s.repo != nil) {
+		if err := s.repo.Save(filename, &commit{message: msg}, s.config.git.push); err != nil {
+			log.Println("failed to save to repo:", filename)
+			return err
+		}
+	}
+
+	return nil
 }
 
 // LoadPage ...
@@ -132,6 +145,8 @@ type Server struct {
 	// Stats/Metrics
 	counters *Counters
 	stats    *stats.Stats
+
+	repo	 *Repo
 }
 
 func (s *Server) render(name string, w http.ResponseWriter, ctx interface{}) {
@@ -198,9 +213,12 @@ func (s *Server) SaveHandler() httprouter.Handle {
 		// get body and sanitize newlines
 		body := CleanNewlines(r.Form.Get("body"))
 
+                msg := r.Form.Get("message")
+
 		page := &Page{Title: title, Body: []byte(body), Brand: s.config.brand}
-		err = page.Save(s.config.data)
+		err = s.Save(page, msg)
 		if err != nil {
+			log.Println("save page:", err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -301,7 +319,18 @@ func (s *Server) initRoutes() {
 }
 
 // NewServer ...
-func NewServer(config Config) *Server {
+func NewServer(config Config) (*Server, error) {
+	var repo *Repo
+
+	if config.git.url != "" {
+		r, err := newRepo(config.git.url, config.data)
+		if err != nil {
+			log.Println("newRepo:", config.data)
+			return nil, err
+		}
+		repo = r
+	}
+
 	server := &Server{
 		config:    config,
 		router:    httprouter.New(),
@@ -317,6 +346,8 @@ func NewServer(config Config) *Server {
 		// Stats/Metrics
 		counters: NewCounters(),
 		stats:    stats.New(),
+
+		repo: repo,
 	}
 
 	// Templates
@@ -342,5 +373,5 @@ func NewServer(config Config) *Server {
 
 	server.initRoutes()
 
-	return server
+	return server, nil
 }

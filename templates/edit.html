@@ -10,6 +10,10 @@
           <label class="form-label" for="input-body">Editing: {{.Title}}</label>
           <textarea class="form-input" id="input-body" name="body" placeholder="Enter content here..." cols="80" rows="24">{{printf "%s" .Body}}</textarea>
         </div>
+        <div class="form-group row">
+          <label for="commit-message" class="form-label">Commit message (optional)</label>
+          <input type="text" class="form-input" id="commit-message" placeholder="..." name="message">
+        </div>
         <div class="form-group">
           <button class="btn btn-sm btn-primary" type="submit">Save</button>
           <a class="btn btn-sm btn-link" href="/view/{{.Title}}">Cancel</a>
