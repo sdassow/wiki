@@ -231,7 +231,7 @@ func (s *Server) ViewHandler() httprouter.Handle {
 		if err != nil {
 			u, err := url.Parse(fmt.Sprintf("/edit/%s", title))
 			if err != nil {
-				http.Error(w, "Internal Error", http.StatusInternalServerError)
+				http.Error(w, err.Error(), http.StatusInternalServerError)
 			}
 
 			http.Redirect(
