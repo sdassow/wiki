@@ -31,9 +31,11 @@ func main() {
 	rootCmd.PersistentFlags().StringVarP(&cfg.bind, "bind", "b", "0.0.0.0:8000", "[int]:<port> to bind to")
 	rootCmd.PersistentFlags().StringVarP(&cfg.brand, "brand", "", "Wiki", "branding at top of each page")
 	rootCmd.PersistentFlags().StringVarP(&cfg.data, "data", "", "./data", "path to data")
+	rootCmd.PersistentFlags().StringVarP(&cfg.repo, "repo", "", "", "url to git repository")
 	viper.BindPFlag("bind", rootCmd.PersistentFlags().Lookup("bind"))
 	viper.BindPFlag("brand", rootCmd.PersistentFlags().Lookup("brand"))
 	viper.BindPFlag("data", rootCmd.PersistentFlags().Lookup("data"))
+	viper.BindPFlag("repo", rootCmd.PersistentFlags().Lookup("repo"))
 
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
@@ -59,4 +61,5 @@ func initConfig() {
 	cfg.bind = viper.GetString("bind")
 	cfg.brand = viper.GetString("brand")
 	cfg.data = viper.GetString("data")
+	cfg.repo = viper.GetString("repo")
 }
