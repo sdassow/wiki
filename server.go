@@ -288,15 +288,9 @@ func (s *Server) initRoutes() {
 	s.router.Handler("GET", "/debug/metrics", exp.ExpHandler(s.counters.r))
 	s.router.GET("/debug/stats", s.StatsHandler())
 
-	s.router.ServeFiles(
-		"/css/*filepath",
-		rice.MustFindBox("static/css").HTTPBox(),
-	)
-
-	s.router.ServeFiles(
-		"/js/*filepath",
-		rice.MustFindBox("static/js").HTTPBox(),
-	)
+	s.router.ServeFiles("/css/*filepath", rice.MustFindBox("static/css").HTTPBox())
+	s.router.ServeFiles("/js/*filepath", rice.MustFindBox("static/js").HTTPBox())
+	s.router.ServeFiles("/f/*filepath", rice.MustFindBox("static/favicon").HTTPBox())
 
 	s.router.GET("/", s.IndexHandler())
 	s.router.GET("/view/*title", s.ViewHandler())
