@@ -5,8 +5,10 @@ import (
 	"errors"
 	"fmt"
 	"html/template"
+	"io"
 	"io/ioutil"
 	"log"
+	"mime/multipart"
 	"net/http"
 	"net/url"
 	"os"
@@ -40,6 +42,7 @@ type Page struct {
 	HTML  template.HTML
 	Brand string
 	Date  time.Time
+	Files []ListFile
 }
 
 // make sure user input path does not leave the directory
@@ -54,15 +57,15 @@ func mkSubDir(dir string, file string) error {
 
 func (s *Server) Save(p *Page, msg string) error {
 	filename := p.Title + FileExtension
-	filepath := path.Join(s.config.data, filename)
+	path := path.Join(s.config.data, filename)
 
 	if err := mkSubDir(s.config.data, filename); err != nil {
 		log.Println("mkdir:", err)
 		return err
 	}
 
-	if err := ioutil.WriteFile(filepath, p.Body, 0600); err != nil {
-		log.Println("write file:", filepath)
+	if err := ioutil.WriteFile(path, p.Body, 0600); err != nil {
+		log.Println("write file:", path)
 		return err
 	}
 
@@ -74,6 +77,32 @@ func (s *Server) Save(p *Page, msg string) error {
 	}
 
 	return nil
+}
+
+type ListFile struct {
+	Info os.FileInfo
+	Dir  string
+}
+
+func ListFiles(base, file string) []ListFile {
+	dir := path.Join(base, file)
+	log.Println("list files in:", dir)
+	files, err := ioutil.ReadDir(dir)
+	if err != nil {
+		return nil
+	}
+
+	log.Printf("found files: %+v\n", files)
+
+	res := make([]ListFile, 0, len(files))
+	for _, f := range files {
+		res = append(res, ListFile{
+			Info: f,
+			Dir:  file,
+		})
+	}
+
+	return res
 }
 
 // LoadPage ...
@@ -102,6 +131,7 @@ func LoadPage(title string, config Config, baseurl *url.URL) (*Page, error) {
 		HTML:  template.HTML(html),
 		Brand: config.brand,
 		Date:  mtime,
+		Files: ListFiles(config.data, title),
 	}, nil
 }
 
@@ -263,6 +293,122 @@ func (s *Server) ViewHandler() httprouter.Handle {
 	}
 }
 
+var multipartByReader = &multipart.Form{
+	Value: make(map[string][]string),
+	File:  make(map[string][]*multipart.FileHeader),
+}
+
+func (s *Server) FileHandler() httprouter.Handle {
+	var maxMemory int64 = 1024 * 1024 * 20
+	type FormFile struct {
+		File   multipart.File
+		Header *multipart.FileHeader
+	}
+
+	GetFormFiles := func(r *http.Request, key string) ([]FormFile, error) {
+		if r.MultipartForm == multipartByReader {
+			return nil, errors.New("http: multipart handled by MultipartReader")
+		}
+		if r.MultipartForm == nil {
+			err := r.ParseMultipartForm(maxMemory)
+			if err != nil {
+				return nil, err
+			}
+		}
+		if r.MultipartForm != nil && r.MultipartForm.File != nil {
+			if fhs := r.MultipartForm.File[key]; len(fhs) > 0 {
+				files := make([]FormFile, 0)
+				for _, fh := range fhs {
+					f, err := fh.Open()
+					if err != nil {
+						return nil, err
+					}
+					files = append(files, FormFile{f, fh})
+				}
+				return files, nil
+			}
+		}
+		return nil, http.ErrMissingFile
+	}
+
+	type UploadInfo struct {
+		Name string
+		Size int64
+	}
+	type UploadFile struct {
+		Dir  string
+		Info UploadInfo
+	}
+
+	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+		title := strings.TrimLeft(p.ByName("title"), "/")
+		filename := path.Join(s.config.data, title+FileExtension)
+		dir := path.Join(s.config.data, title)
+
+		log.Println("GETTING A FILE???", filename)
+
+		files, err := GetFormFiles(r, "file")
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		results := make([]UploadFile, 0, len(files))
+		for _, file := range files {
+			defer file.File.Close()
+
+			handler := file.Header
+
+			log.Printf("Filename: %+v", handler.Filename)
+			log.Printf("Size: %+v", handler.Size)
+			log.Printf("Header: %+v", handler.Header)
+			log.Printf("Dir: %+v", dir)
+
+			if err := os.MkdirAll(dir, 0755); err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+
+			tmpfile, err := ioutil.TempFile(dir, ".upload-*.tmp")
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+			defer tmpfile.Close()
+
+			n, err := io.Copy(tmpfile, file.File)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+			if n != handler.Size {
+				log.Printf("got less bytes than expected: %d < %d", handler.Size, n)
+			}
+
+			dstfile := path.Join(dir, handler.Filename)
+			if err := os.Rename(tmpfile.Name(), dstfile); err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+
+			results = append(results, UploadFile{
+				Dir: title,
+				Info: UploadInfo{
+					Name: handler.Filename,
+					Size: handler.Size,
+				},
+			})
+		}
+
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
+		bs, err := json.Marshal(results)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+		w.Write(bs)
+	}
+}
+
 // StatsHandler ...
 func (s *Server) StatsHandler() httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
@@ -310,10 +456,13 @@ func (s *Server) initRoutes() {
 	s.router.ServeFiles("/css/*filepath", rice.MustFindBox("static/css").HTTPBox())
 	s.router.ServeFiles("/js/*filepath", rice.MustFindBox("static/js").HTTPBox())
 	s.router.ServeFiles("/f/*filepath", rice.MustFindBox("static/favicon").HTTPBox())
+	fs := wikiFileSystem{http.Dir(s.config.data), s.config.data}
+	s.router.ServeFiles("/file/*filepath", fs)
 
 	s.router.GET("/", s.IndexHandler())
 	s.router.GET("/view/*title", s.ViewHandler())
 	s.router.GET("/edit/*title", s.EditHandler())
+	s.router.POST("/file/*title", s.FileHandler())
 	s.router.POST("/save/*title", s.SaveHandler())
 	s.router.POST("/search", s.SearchHandler())
 }

@@ -39,5 +39,70 @@
       <p>Last edited: {{.Date.Format "Mon Jan 2 15:04:05 MST 2006" }}</p>
     </div>
   </div>
+  <div class="columns">
+    <div class="column col-9 text-left">
+    <ul id="file-list">
+    {{range .Files}}
+    <li><a href="/file/{{.Dir}}/{{.Info.Name}}">{{.Info.Name}}</a> ({{.Info.Size}})
+    </li>
+    {{end}}
+    </ul>
+    </div>
+    <div class="column col-3 text-left">
+      <input type="file" class="form-input" id="file-input" multiple="multiple" onchange="startUpload()">
+      <progress class="progress" value="0" max="100" id="file-progress"></progress>
+    </div>
+  </div>
 </section>
+<script>
+function appendUpload(data) {
+
+	let ul = document.querySelector('#file-list');
+
+	for ( let n = 0; n < data.length; n++ ) {
+		let fileName = data[n].Info.Name;
+		let filePath = data[n].Dir;
+
+		let li = document.createElement('li');
+
+		let a = document.createElement('a');
+		a.appendChild(document.createTextNode(fileName));
+		a.href = '/file/' + filePath + '/' + fileName;
+
+		li.appendChild(a);
+		li.appendChild(document.createTextNode(' (' + data[n].Info.Size + ')'))
+		ul.appendChild(li);
+	}
+}
+function startUpload() {
+	let progress = document.querySelector('#file-progress');
+	let input = document.querySelector('#file-input');
+	if (input.files.length == 0) {
+		progress.value = 0;
+		return;
+	}
+
+	let data = new FormData();
+	for ( let n = 0; n < input.files.length; n++ ) {
+		data.append( 'file', input.files[n] );
+	}
+
+	let req = new XMLHttpRequest();
+	req.open('POST', '/file/{{.Title}}');
+	req.upload.addEventListener('progress', (e) => {
+		let completed = (e.loaded / e.total) * 100;
+		progress.value = completed;
+	})
+	req.addEventListener('load', (e) => {
+		console.log('status', req.status);
+		console.log('res', req.response);
+
+		if (req.status == 200) {
+			let data = JSON.parse(req.response);
+			appendUpload(data);
+		}
+	})
+	req.send(data);
+}
+</script>
 {{end}}
