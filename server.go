@@ -28,7 +28,6 @@ import (
 	"github.com/GeertJohan/go.rice"
 	"github.com/julienschmidt/httprouter"
 	"github.com/microcosm-cc/bluemonday"
-	"github.com/russross/blackfriday/v2"
 )
 
 var (
@@ -122,7 +121,7 @@ func LoadPage(title string, config Config, baseurl *url.URL) (*Page, error) {
 	// Also automatically replace CamelCase page identifiers as links
 	markdown := AutoCamelCase(body, baseurl.String())
 
-	unsafe := blackfriday.Run(markdown, blackfriday.WithExtensions(blackfriday.CommonExtensions | blackfriday.NoEmptyLineBeforeBlock))
+	unsafe := renderMarkdown(markdown)
 	html := bluemonday.UGCPolicy().SanitizeBytes(unsafe)
 
 	return &Page{
