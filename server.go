@@ -48,7 +48,7 @@ type Page struct {
 func mkSubDir(dir string, file string) error {
 	d := path.Clean(dir)
 	sd := path.Dir(path.Clean(path.Join(d, file)))
-	if sd[ 0:len(d) ] != d {
+	if sd[0:len(d)] != d {
 		return errors.New("File in wrong directory")
 	}
 	return os.MkdirAll(sd, 0755)
@@ -68,7 +68,7 @@ func (s *Server) Save(p *Page, msg string) error {
 		return err
 	}
 
-	if (s.repo != nil) {
+	if s.repo != nil {
 		if err := s.repo.Save(filename, &commit{message: msg}, s.config.git.push); err != nil {
 			log.Println("failed to save to repo:", filename)
 			return err
@@ -85,13 +85,13 @@ type ListFile struct {
 
 func ListFiles(base, file string) []ListFile {
 	dir := path.Join(base, file)
-	log.Println("list files in:", dir)
+	//log.Println("list files in:", dir)
 	files, err := ioutil.ReadDir(dir)
 	if err != nil {
 		return nil
 	}
 
-	log.Printf("found files: %+v\n", files)
+	//log.Printf("found files: %+v\n", files)
 
 	res := make([]ListFile, 0, len(files))
 	for _, f := range files {
@@ -106,7 +106,7 @@ func ListFiles(base, file string) []ListFile {
 
 // LoadPage ...
 func LoadPage(title string, config Config, baseurl *url.URL) (*Page, error) {
-	filename := path.Join(config.data, title + FileExtension)
+	filename := path.Join(config.data, title+FileExtension)
 	body, err := ioutil.ReadFile(filename)
 	if err != nil {
 		return nil, err
@@ -175,7 +175,7 @@ type Server struct {
 	counters *Counters
 	stats    *stats.Stats
 
-	repo	 *Repo
+	repo *Repo
 }
 
 func (s *Server) render(name string, w http.ResponseWriter, ctx interface{}) {
@@ -242,7 +242,7 @@ func (s *Server) SaveHandler() httprouter.Handle {
 		// get body and sanitize newlines
 		body := CleanNewlines(r.Form.Get("body"))
 
-                msg := r.Form.Get("message")
+		msg := r.Form.Get("message")
 
 		page := &Page{Title: title, Body: []byte(body), Brand: s.config.brand}
 		err = s.Save(page, msg)
