@@ -39,7 +39,7 @@
       <p>Last edited: {{.Date.Format "Mon Jan 2 15:04:05 MST 2006" }}</p>
     </div>
   </div>
-  <div class="columns">
+  <div class="columns dropzone">
     <div class="column col-9 text-left">
     <ul id="file-list">
     {{range .Files}}
@@ -55,8 +55,19 @@
   </div>
 </section>
 <script>
-function appendUpload(data) {
+(function(){
+	const dropzone = document.querySelector('.dropzone');
 
+	dropzone.ondragover = dropzone.ondragenter = function(ev) {
+		ev.stopPropagation();
+		ev.preventDefault();
+	}
+	dropzone.ondrop = function(ev) {
+		const files = ev.dataTransfer.files;
+		doUpload(files);
+	}
+})();
+function appendUpload(data) {
 	let ul = document.querySelector('#file-list');
 
 	for ( let n = 0; n < data.length; n++ ) {
@@ -81,12 +92,16 @@ function startUpload() {
 		progress.value = 0;
 		return;
 	}
+	doUpload(input.files);
+}
 
+function doUpload(files) {
 	let data = new FormData();
-	for ( let n = 0; n < input.files.length; n++ ) {
-		data.append( 'file', input.files[n] );
+	for ( let n = 0; n < files.length; n++ ) {
+		data.append( 'file', files[n] );
 	}
 
+	let progress = document.querySelector('#file-progress');
 	let req = new XMLHttpRequest();
 	req.open('POST', '/file/{{.Title}}');
 	req.upload.addEventListener('progress', (e) => {
