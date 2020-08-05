@@ -28,6 +28,8 @@ import (
 	"github.com/GeertJohan/go.rice"
 	"github.com/julienschmidt/httprouter"
 	"github.com/microcosm-cc/bluemonday"
+
+	"github.com/go-ego/riot"
 )
 
 var (
@@ -74,6 +76,8 @@ func (s *Server) Save(p *Page, msg string) error {
 			return err
 		}
 	}
+
+	s.IndexPage(p)
 
 	return nil
 }
@@ -176,6 +180,8 @@ type Server struct {
 	stats    *stats.Stats
 
 	repo *Repo
+
+	searcher *riot.Engine
 }
 
 func (s *Server) render(name string, w http.ResponseWriter, ctx interface{}) {
@@ -496,6 +502,7 @@ func NewServer(config Config) (*Server, error) {
 		stats:    stats.New(),
 
 		repo: repo,
+		searcher: riot.New("en"),
 	}
 
 	// Templates
@@ -520,6 +527,9 @@ func NewServer(config Config) (*Server, error) {
 	*/
 
 	server.initRoutes()
+	if err := server.SetupSearch(); err != nil {
+		log.Println(err)
+	}
 
 	return server, nil
 }

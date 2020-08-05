@@ -2,16 +2,12 @@ package main
 
 import (
 	"io/ioutil"
+	"log"
+	"os"
 	"path/filepath"
 	"strings"
-	"os"
 
-	"golang.org/x/text/language"
-	"golang.org/x/text/search"
-)
-
-const (
-	bufferSize = 10
+	"github.com/go-ego/riot/types"
 )
 
 // SearchHit - an individual search match
@@ -28,12 +24,21 @@ type SearchResults struct {
 	Error error
 }
 
-// DoSearch - searches the wiki for the given text
-func (s *Server) DoSearch(term string) *SearchResults {
-	results := &SearchResults{}
-	results.Term = term
-	results.Hits = make([]*SearchHit, 0)
+func (s *Server) IndexPage(p *Page) {
+	s.searcher.Index(p.Title+FileExtension, types.DocData{Content: string(p.Body)})
+	s.searcher.Flush()
+}
 
+func (s *Server) SetupSearch() error {
+	docs := s.searcher.NumDocsIndexed()
+
+	log.Printf("index size: %+v", docs)
+
+	if docs > 0 {
+		return nil
+	}
+
+	log.Printf("scanning files: %+s", s.config.data)
 	err := filepath.Walk(s.config.data, func(fullFile string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
@@ -43,52 +48,45 @@ func (s *Server) DoSearch(term string) *SearchResults {
 		}
 
 		if filepath.Ext(fullFile) == FileExtension {
-			hit, err := checkFile(term, fullFile)
+			rawData, err := ioutil.ReadFile(fullFile)
 			if err != nil {
-				s.logger.Printf("ERROR Reading File[%s]: %s\n", fullFile, err.Error())
+				return err
 			}
-			if hit != nil {
-				relFile, _ := filepath.Rel(s.config.data, fullFile)
-				hit.Title = strings.TrimSuffix(relFile, FileExtension)
-				hit.Page = "/view/" + hit.Title
-				results.Hits = append(results.Hits, hit)
+			data := types.DocData{Content: string(rawData)}
+			relFile, err := filepath.Rel(s.config.data, fullFile)
+			if err != nil {
+				return err
 			}
-		}
 
+			log.Printf("indexing %s", relFile)
+			s.searcher.Index(relFile, data)
+		}
 		return nil
-	} )
-	if err != nil {
-		s.logger.Printf("ERROR Walking Directory[%s]: %s\n", s.config.data, err.Error())
-	}
-	return results
+	})
+	s.searcher.Flush()
+	log.Println("indexing done")
+	return err
 }
 
-func checkFile(term string, filepath string) (*SearchHit, error) {
+func (s *Server) DoSearch(term string) *SearchResults {
+	results := &SearchResults{}
+	results.Term = term
+	results.Hits = make([]*SearchHit, 0)
 
-	rawData, err := ioutil.ReadFile(filepath)
-	if err != nil {
-		return nil, err
-	}
-	content := string(rawData)
-	contentLength := len(content)
+	sreq := types.SearchReq{Text: term}
+	sres := s.searcher.SearchDoc(sreq)
 
-	matcher := search.New(language.English, search.Loose, search.IgnoreCase)
-	pattern := matcher.CompileString(term)
-	start, end := pattern.IndexString(content)
-	if start > -1 {
-		hit := &SearchHit{}
-		hit.Page = filepath
-		tStart := start - bufferSize
-		if tStart < 0 {
-			tStart = 0
+	//log.Printf("results: %+v", sres)
+
+	for _, doc := range sres.Docs {
+		fullFile := doc.DocId
+		title := strings.TrimSuffix(fullFile, FileExtension)
+		hit := &SearchHit{
+			Title: title,
+			Page:  "/view/" + title,
 		}
-		tEnd := end + 10
-		if tEnd > contentLength {
-			tEnd = contentLength
-		}
-		hit.Subtext = content[tStart:tEnd]
-		return hit, nil
+		results.Hits = append(results.Hits, hit)
 	}
 
-	return nil, nil
+	return results
 }
