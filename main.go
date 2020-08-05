@@ -2,24 +2,24 @@ package main
 
 import (
 	"fmt"
-	"os"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"os"
 	"strings"
 )
 
 var (
-	cfg Config
+	cfg     Config
 	cfgFile string
 )
 
 func main() {
 
 	// The sole command
-	var rootCmd = &cobra.Command {
-		Use: "wiki",
+	var rootCmd = &cobra.Command{
+		Use:   "wiki",
 		Short: "A wiki",
-		Long: "wiki is a self-hosted well uh wiki engine or content management system that lets you create and share content in Markdown format.",
+		Long:  "wiki is a self-hosted well uh wiki engine or content management system that lets you create and share content in Markdown format.",
 		Run: func(cmd *cobra.Command, args []string) {
 			fmt.Printf("Starting on %s...\n", cfg.bind)
 
@@ -32,7 +32,7 @@ func main() {
 		},
 	}
 
-    // Setup command line arguments and link to config file properties
+	// Setup command line arguments and link to config file properties
 	cobra.OnInitialize(initConfig)
 	rootCmd.PersistentFlags().StringVarP(&cfgFile, "config", "c", "", "config file")
 	rootCmd.PersistentFlags().StringVarP(&cfg.bind, "bind", "b", "0.0.0.0:8000", "[int]:<port> to bind to")

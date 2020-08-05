@@ -3,7 +3,7 @@ package main
 const FileExtension = ".md"
 
 type Git struct {
-	url string
+	url  string
 	push bool
 }
 
@@ -11,6 +11,6 @@ type Git struct {
 type Config struct {
 	data  string
 	brand string
-	bind string
-	git Git
+	bind  string
+	git   Git
 }

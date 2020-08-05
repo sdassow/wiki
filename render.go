@@ -1,12 +1,12 @@
 package main
 
 import (
+	"github.com/russross/blackfriday/v2"
 	"io"
-        "github.com/russross/blackfriday/v2"
 )
 
 type wikiRenderer struct {
-	defR *blackfriday.HTMLRenderer
+	defR  *blackfriday.HTMLRenderer
 	fileR *blackfriday.HTMLRenderer
 }
 
@@ -35,13 +35,13 @@ func renderMarkdown(src []byte) []byte {
 			//AbsolutePrefix: "/view",
 		}),
 		fileR: blackfriday.NewHTMLRenderer(blackfriday.HTMLRendererParameters{
-			Flags: blackfriday.CommonHTMLFlags,
+			Flags:          blackfriday.CommonHTMLFlags,
 			AbsolutePrefix: "/file",
 		}),
 	}
 
-        //out := blackfriday.Run(src, blackfriday.WithExtensions(blackfriday.CommonExtensions|blackfriday.NoEmptyLineBeforeBlock))
-        out := blackfriday.Run(src, blackfriday.WithExtensions(blackfriday.CommonExtensions|blackfriday.NoEmptyLineBeforeBlock), blackfriday.WithRenderer(&r))
+	//out := blackfriday.Run(src, blackfriday.WithExtensions(blackfriday.CommonExtensions|blackfriday.NoEmptyLineBeforeBlock))
+	out := blackfriday.Run(src, blackfriday.WithExtensions(blackfriday.CommonExtensions|blackfriday.NoEmptyLineBeforeBlock), blackfriday.WithRenderer(&r))
 
 	return out
 }

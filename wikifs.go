@@ -1,9 +1,9 @@
 package main
 
 import (
+	"log"
 	"net/http"
 	"os"
-	"log"
 	"path"
 )
 
@@ -26,7 +26,7 @@ func (f wikiFile) Readdir(n int) (fis []os.FileInfo, err error) {
 	files, err := f.File.Readdir(n)
 	for _, file := range files {
 		//if !isWikiFile(file.Name()) {
-			fis = append(fis, file)
+		fis = append(fis, file)
 		//}
 	}
 	return

@@ -9,22 +9,22 @@ import (
 	"log"
 	"time"
 	//"os"
-	"sync"
 	"os/user"
+	"sync"
 	//"strings"
 )
 
 type Repo struct {
 	sync.Mutex
-	r	*git.Repository
-	w	*git.Worktree
+	r *git.Repository
+	w *git.Worktree
 }
 
 type commit struct {
-	name string
-	email string
+	name      string
+	email     string
 	timestamp time.Time
-	message string
+	message   string
 }
 
 func newRepo(url string, dir string) (*Repo, error) {
@@ -109,9 +109,9 @@ func (r *Repo) Save(filename string, co *commit, push bool) error {
 
 	hash, err := r.w.Commit(co.message, &git.CommitOptions{
 		Author: &object.Signature{
-			Name: co.name,
+			Name:  co.name,
 			Email: co.email,
-			When: co.timestamp,
+			When:  co.timestamp,
 		},
 	})
 	if err != nil {

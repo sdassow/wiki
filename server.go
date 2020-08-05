@@ -472,7 +472,6 @@ func (s *Server) initRoutes() {
 	s.router.POST("/search", s.SearchHandler())
 }
 
-// NewServer ...
 func NewServer(config Config) (*Server, error) {
 	var repo *Repo
 
@@ -501,7 +500,7 @@ func NewServer(config Config) (*Server, error) {
 		counters: NewCounters(),
 		stats:    stats.New(),
 
-		repo: repo,
+		repo:     repo,
 		searcher: riot.New("en"),
 	}
 
