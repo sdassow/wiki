@@ -1,3 +1,0 @@
-This is the front page.
-
-Check out TestPage

@@ -1,0 +1,46 @@
+# *** WARNING: GENERATED FILE ***
+# This file is automatically updated and rewritten in sorted order every time
+# the app runs in dev mode. You may manually add or remove files, but don't
+# expect comments or ordering to be retained.
+bin/bash
+bin/mkdir
+etc/ld.so.cache
+etc/localtime
+etc/mime.types
+lib/x86_64-linux-gnu/ld-2.24.so
+lib/x86_64-linux-gnu/libc-2.24.so
+lib/x86_64-linux-gnu/libc.so.6
+lib/x86_64-linux-gnu/libdl-2.24.so
+lib/x86_64-linux-gnu/libdl.so.2
+lib/x86_64-linux-gnu/libnsl-2.24.so
+lib/x86_64-linux-gnu/libnsl.so.1
+lib/x86_64-linux-gnu/libnss_compat-2.24.so
+lib/x86_64-linux-gnu/libnss_compat.so.2
+lib/x86_64-linux-gnu/libnss_files-2.24.so
+lib/x86_64-linux-gnu/libnss_files.so.2
+lib/x86_64-linux-gnu/libnss_nis-2.24.so
+lib/x86_64-linux-gnu/libnss_nis.so.2
+lib/x86_64-linux-gnu/libpcre.so.3
+lib/x86_64-linux-gnu/libpcre.so.3.13.3
+lib/x86_64-linux-gnu/libpthread-2.24.so
+lib/x86_64-linux-gnu/libpthread.so.0
+lib/x86_64-linux-gnu/libselinux.so.1
+lib/x86_64-linux-gnu/libtinfo.so.5
+lib/x86_64-linux-gnu/libtinfo.so.5.9
+lib64/ld-linux-x86-64.so.2
+opt/app/.sandstorm/launcher.sh
+opt/app/app
+opt/app/static/css/easymde.min.css
+opt/app/static/css/spectre-icons.min.css
+opt/app/static/css/spectre.min.css
+opt/app/static/js/easymde.min.js
+opt/app/static/js/jquery.slim.min.js
+opt/app/templates/base.html
+opt/app/templates/edit.html
+opt/app/templates/view.html
+proc/cpuinfo
+sandstorm-http-bridge
+sandstorm-http-bridge-config
+sandstorm-manifest
+usr/share/zoneinfo/GMT
+usr/share/zoneinfo/GMT+0
