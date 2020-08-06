@@ -1,6 +1,7 @@
 *~
 *.bak
 
+/data
 /dist
 /wiki
 /rice-box.go
