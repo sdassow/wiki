@@ -126,7 +126,9 @@ func LoadPage(title string, config Config, baseurl *url.URL) (*Page, error) {
 	markdown := AutoCamelCase(body, baseurl.String())
 
 	unsafe := renderMarkdown(markdown)
-	html := bluemonday.UGCPolicy().SanitizeBytes(unsafe)
+	p := bluemonday.UGCPolicy()
+	p.AllowAttrs("class").Matching(regexp.MustCompile("^language-[a-zA-Z0-9]+$")).OnElements("code")
+	html := p.SanitizeBytes(unsafe)
 
 	return &Page{
 		Title: title,
