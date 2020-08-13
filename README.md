@@ -26,7 +26,7 @@ Start creating/editing content!
 ## Configuration
 
 By default wiki pages are stored in `./data` in the local directory. This can
-be changed by supplying the `-data /path/to/data` option.
+be changed by supplying the `--data /path/to/data` option.
 
 ## License
 
