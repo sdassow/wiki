@@ -1,14 +1,14 @@
 #!/bin/bash
 set -euo pipefail
 
-export GOPATH=$HOME/go
-
-[ -d $GOPATH/src/github.com/prologic/ ] || mkdir -p $GOPATH/src/github.com/prologic/
-[ -L $GOPATH/src/github.com/prologic/wiki ] || \
-	ln -s /opt/app $GOPATH/src/github.com/prologic/wiki
-
 cd /opt/app
-# cd $GOPATH/src/github.com/prologic/wiki
-go get -v -d ./...
-go build .
+if [ ! -e go.mod ]; then
+	printf "Error: This directory does not contain a go module;\n"
+	printf "vagrant-spk's golang stack does not support older GOPATH\n"
+	printf "based projects. Try running:\n" >&2
+	printf "\n" >&2
+	printf "    go mod init example.com/mypkg\n" >&2
+	exit 1
+fi
+go build -o wiki
 exit 0

@@ -29,7 +29,6 @@ lib/x86_64-linux-gnu/libtinfo.so.5
 lib/x86_64-linux-gnu/libtinfo.so.5.9
 lib64/ld-linux-x86-64.so.2
 opt/app/.sandstorm/launcher.sh
-opt/app/app
 opt/app/static/css/easymde.min.css
 opt/app/static/css/spectre-icons.min.css
 opt/app/static/css/spectre.min.css
@@ -38,6 +37,7 @@ opt/app/static/js/jquery.slim.min.js
 opt/app/templates/base.html
 opt/app/templates/edit.html
 opt/app/templates/view.html
+opt/app/wiki
 proc/cpuinfo
 sandstorm-http-bridge
 sandstorm-http-bridge-config
