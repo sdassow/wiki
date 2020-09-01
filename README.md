@@ -4,6 +4,7 @@ Golang based wiki engine with content in Markdown format.
 
 Additional features:
 
+ - Git support
  - Attachments
  - Mermaid diagrams
  - Fulltext search
