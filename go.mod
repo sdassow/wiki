@@ -1,4 +1,4 @@
-module github.com/prologic/wiki
+module github.com/sdassow/wiking
 
 go 1.13
 
