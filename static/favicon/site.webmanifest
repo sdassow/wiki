@@ -1,6 +1,6 @@
 {
-    "name": "Wiki",
-    "short_name": "Wiki",
+    "name": "Wiking",
+    "short_name": "Wiking",
     "icons": [
         {
             "src": "/f/android-chrome-192x192.png",
@@ -13,7 +13,7 @@
             "type": "image/png"
         }
     ],
-    "theme_color": "#23c5ff",
-    "background_color": "#23c5ff",
+    "theme_color": "#ffffff",
+    "background_color": "#ffffff",
     "display": "standalone"
 }
