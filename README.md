@@ -7,7 +7,7 @@ Additional features:
  - Git support using [go-git](https://github.com/go-git/go-git) (pure Go implementation)
  - Attachments
  - Diagrams using [Mermaid](https://mermaid-js.github.io/mermaid/)
- - Fulltext search using [Riot](github.com/go-ego/riot) engine
+ - Fulltext search using [Riot](https://github.com/go-ego/riot) engine
 
 ## Configuration
 
