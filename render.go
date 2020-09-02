@@ -40,7 +40,6 @@ func renderMarkdown(src []byte) []byte {
 		}),
 	}
 
-	//out := blackfriday.Run(src, blackfriday.WithExtensions(blackfriday.CommonExtensions|blackfriday.NoEmptyLineBeforeBlock))
 	out := blackfriday.Run(src, blackfriday.WithExtensions(blackfriday.CommonExtensions|blackfriday.NoEmptyLineBeforeBlock), blackfriday.WithRenderer(&r))
 
 	return out
