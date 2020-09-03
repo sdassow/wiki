@@ -41,6 +41,11 @@
       promptURLs: true,
       tabSize: 4,
       autoDownloadFontAwesome: false,
+      uploadImage: true,
+      imageUploadFunction: function(file, onSuccess, onError) {
+          console.log('upload image...', file);
+          doUpload('/file/{{.Title}}', [file], onSuccess, onError);
+      },
   });
 })();
 </script>
