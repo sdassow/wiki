@@ -30,6 +30,7 @@ import (
 	"github.com/microcosm-cc/bluemonday"
 
 	"github.com/go-ego/riot"
+	"github.com/gorilla/csrf"
 )
 
 var (
@@ -44,6 +45,7 @@ type Page struct {
 	Brand string
 	Date  time.Time
 	Files []ListFile
+	CSRF  template.HTML
 }
 
 // make sure user input path does not leave the directory
@@ -230,6 +232,8 @@ func (s *Server) EditHandler() httprouter.Handle {
 			page = &Page{Title: title, Brand: s.config.brand}
 		}
 
+		page.CSRF = csrf.TemplateField(r)
+
 		s.render("edit", w, page)
 	}
 }
@@ -295,6 +299,8 @@ func (s *Server) ViewHandler() httprouter.Handle {
 
 			return
 		}
+
+		page.CSRF = csrf.TemplateField(r)
 
 		s.render("view", w, page)
 	}
@@ -444,6 +450,19 @@ func (s *Server) SearchHandler() httprouter.Handle {
 	}
 }
 
+func (s *Server) Protect(h httprouter.Handle) http.Handler {
+	protect := csrf.Protect(
+		[]byte("12345678901234567890123456789012"),
+		csrf.Secure(false),
+		csrf.Path("/"),
+	)
+
+	return protect(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		p := httprouter.ParamsFromContext(r.Context())
+		h(w, r, p)
+	}))
+}
+
 // ListenAndServe ...
 func (s *Server) ListenAndServe() {
 	log.Fatal(
@@ -467,12 +486,12 @@ func (s *Server) initRoutes() {
 	fs := wikiFileSystem{http.Dir(s.config.data), s.config.data}
 	s.router.ServeFiles("/file/*filepath", fs)
 
-	s.router.GET("/", s.IndexHandler())
-	s.router.GET("/view/*title", s.ViewHandler())
-	s.router.GET("/edit/*title", s.EditHandler())
-	s.router.POST("/file/*title", s.FileHandler())
-	s.router.POST("/save/*title", s.SaveHandler())
-	s.router.POST("/search", s.SearchHandler())
+	s.router.Handler("GET", "/", s.Protect(s.IndexHandler()))
+	s.router.Handler("GET", "/view/*title", s.Protect(s.ViewHandler()))
+	s.router.Handler("GET", "/edit/*title", s.Protect(s.EditHandler()))
+	s.router.Handler("POST", "/file/*title", s.Protect(s.FileHandler()))
+	s.router.Handler("POST", "/save/*title", s.Protect(s.SaveHandler()))
+	s.router.Handler("POST", "/search", s.Protect(s.SearchHandler()))
 }
 
 func NewServer(config Config) (*Server, error) {

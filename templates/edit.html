@@ -7,6 +7,7 @@
   <div class="columns">
     <div class="column">
       <form action="/save/{{.Title}}" method="POST">
+        {{ .CSRF }}
         <div class="form-group">
           <label class="form-label" for="input-body">Editing: {{.Title}}</label>
           <textarea class="form-input" id="input-body" name="body" placeholder="Enter content here..." cols="80" rows="24">{{printf "%s" .Body}}</textarea>

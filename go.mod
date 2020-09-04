@@ -6,6 +6,7 @@ require (
 	github.com/GeertJohan/go.rice v1.0.0
 	github.com/go-ego/riot v0.0.0-20200611143841-c7c8c77eaf1a
 	github.com/go-git/go-git/v5 v5.1.0
+	github.com/gorilla/csrf v1.7.0
 	github.com/julienschmidt/httprouter v1.3.0
 	github.com/microcosm-cc/bluemonday v1.0.3
 	github.com/rcrowley/go-metrics v0.0.0-20200313005456-10cdbea86bc0

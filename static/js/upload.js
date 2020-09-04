@@ -63,6 +63,8 @@ function doUpload(endpoint, files, onSuccess, onError) {
 			}
 		}
 	})
+	let csrfToken = document.getElementsByName("gorilla.csrf.Token")[0].value;
+	req.setRequestHeader('X-CSRF-Token', csrfToken);
 	req.send(data);
 }
 
