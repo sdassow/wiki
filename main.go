@@ -38,7 +38,7 @@ func main() {
 	rootCmd.PersistentFlags().StringVarP(&cfg.data, "data", "", "./data", "path to data")
 	rootCmd.PersistentFlags().StringVarP(&cfg.indexdir, "indexdir", "", "./riot-index", "path to search index directory")
 	rootCmd.PersistentFlags().StringVarP(&cfg.csrf.keyfile, "csrf-keyfile", "", "./csrf.key", "path to csrf key file")
-	rootCmd.PersistentFlags().BoolVarP(&cfg.csrf.insecure, "csrf-insecure", "", true, "send csrf cookie over http")
+	rootCmd.PersistentFlags().BoolVarP(&cfg.csrf.insecure, "csrf-insecure", "", false, "send csrf cookie over http")
 	rootCmd.PersistentFlags().StringVarP(&cfg.git.url, "git-url", "", "", "url to git repository")
 	rootCmd.PersistentFlags().BoolVarP(&cfg.git.push, "git-push", "", true, "push to git repository")
 
