@@ -2,13 +2,13 @@ package main
 
 import (
 	"encoding/json"
-	"math/rand"
 	"errors"
 	"fmt"
 	"html/template"
 	"io"
 	"io/ioutil"
 	"log"
+	"math/rand"
 	"mime/multipart"
 	"net/http"
 	"net/url"
