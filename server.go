@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"math/rand"
 	"errors"
 	"fmt"
 	"html/template"
@@ -452,8 +453,8 @@ func (s *Server) SearchHandler() httprouter.Handle {
 
 func (s *Server) Protect(h httprouter.Handle) http.Handler {
 	protect := csrf.Protect(
-		[]byte("12345678901234567890123456789012"),
-		csrf.Secure(false),
+		s.config.csrf.key,
+		csrf.Secure(!s.config.csrf.insecure),
 		csrf.Path("/"),
 	)
 
@@ -504,6 +505,24 @@ func NewServer(config Config) (*Server, error) {
 			return nil, err
 		}
 		repo = r
+	}
+
+	if config.csrf.keyfile != "" {
+		b, err := ioutil.ReadFile(config.csrf.keyfile)
+		if err != nil && !os.IsNotExist(err) {
+			return nil, err
+		}
+		if b == nil {
+			log.Printf("csrf key file not found, generating new one: %s", config.csrf.keyfile)
+			b = make([]byte, 32)
+			rand.Seed(time.Now().UnixNano())
+			rand.Read(b)
+			if err := ioutil.WriteFile(config.csrf.keyfile, b, 0600); err != nil {
+				return nil, err
+			}
+		}
+		log.Printf("using csrf keyfile: %s", config.csrf.keyfile)
+		config.csrf.key = b
 	}
 
 	server := &Server{
