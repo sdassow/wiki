@@ -542,7 +542,7 @@ func NewServer(config Config) (*Server, error) {
 		stats:    stats.New(),
 
 		repo:     repo,
-		searcher: riot.New("en"),
+		searcher: riot.New("en", config.indexdir),
 	}
 
 	// Templates

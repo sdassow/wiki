@@ -15,9 +15,10 @@ type Csrf struct {
 
 // Config ...
 type Config struct {
-	data  string
-	brand string
-	bind  string
-	git   Git
-	csrf  Csrf
+	data     string
+	brand    string
+	bind     string
+	git      Git
+	csrf     Csrf
+	indexdir string
 }
