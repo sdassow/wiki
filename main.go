@@ -58,8 +58,8 @@ func main() {
 }
 
 func initConfig() {
-	// Read in environment variables with prefix WIKI_
-	viper.SetEnvPrefix("WIKI")
+	// Read in environment variables with prefix WIKING_
+	viper.SetEnvPrefix("WIKING")
 	viper.AutomaticEnv()
 
 	if cfgFile != "" {
