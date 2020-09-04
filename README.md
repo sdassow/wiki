@@ -19,9 +19,12 @@ The command line options are as follows:
  * `--bind [host]:port` - address to bind to (default `0.0.0.0:8000`)
  * `--brand string` - branding at top of each page (default `Wiki`)
  * `--config file` - configuration file
+ * `--csrf-insecure` - send csrf cookie over http (default `false`)
+ * `--csrf-keyfile string` - path to csrf key file (default `./csrf.key`)
  * `--data dir` - data storage directory (default `./data`)
  * `--git-url url` - git repository to pull from (and push to), disabled by default
  * `--git-push` - enable push on commit, disabled by default
+ * `--indexdir string` - path to search index directory (default `./riot-index`)
 
 ## License
 
