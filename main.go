@@ -17,9 +17,7 @@ func main() {
 
 	// The sole command
 	var rootCmd = &cobra.Command{
-		Use:   "wiki",
-		Short: "A wiki",
-		Long:  "wiki is a self-hosted well uh wiki engine or content management system that lets you create and share content in Markdown format.",
+		Use: "wiking",
 		Run: func(cmd *cobra.Command, args []string) {
 			fmt.Printf("Starting on %s...\n", cfg.bind)
 
