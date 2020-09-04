@@ -532,7 +532,7 @@ func NewServer(config Config) (*Server, error) {
 
 		// Logger
 		logger: logger.New(logger.Options{
-			Prefix:               "wiki",
+			Prefix:               "wiking",
 			RemoteAddressHeaders: []string{"X-Forwarded-For"},
 			OutputFlags:          log.LstdFlags,
 		}),
