@@ -23,7 +23,7 @@ The configuration options are as follows:
  * `git-push bool` - enable push on commit, disabled by default
  * `git-url string` - git repository to pull from (and push to), disabled by default
  * `indexdir string` - path to search index directory (default `./riot-index`)
- * `listen-address string` - address to bind to (default `0.0.0.0:8000`)
+ * `listen-address string` - address to bind to (default `:8000`)
  * `listen-network string` - network can be "tcp", "tcp4", "tcp6", "unix" or "unixpacket" (default `tcp`)
 
 ## License

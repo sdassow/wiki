@@ -35,7 +35,7 @@ func main() {
 
 	viper.SetEnvKeyReplacer(strings.NewReplacer("-", "_"))
 
-	viper.SetDefault("listen-address", "0.0.0.0:8000")
+	viper.SetDefault("listen-address", ":8000")
 	viper.SetDefault("listen-network", "tcp")
 	viper.SetDefault("brand", "Wiki")
 	viper.SetDefault("csrf-keyfile", "./csrf.key")
