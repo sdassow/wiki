@@ -30,28 +30,19 @@ func main() {
 		},
 	}
 
-	// Setup command line arguments and link to config file properties
 	cobra.OnInitialize(initConfig)
-	rootCmd.PersistentFlags().StringVarP(&cfgFile, "config", "c", "", "config file")
-	rootCmd.PersistentFlags().StringVarP(&cfg.bind, "bind", "b", "0.0.0.0:8000", "[int]:<port> to bind to")
-	rootCmd.PersistentFlags().StringVarP(&cfg.brand, "brand", "", "Wiki", "branding at top of each page")
-	rootCmd.PersistentFlags().StringVarP(&cfg.data, "data", "", "./data", "path to data")
-	rootCmd.PersistentFlags().StringVarP(&cfg.indexdir, "indexdir", "", "./riot-index", "path to search index directory")
-	rootCmd.PersistentFlags().StringVarP(&cfg.csrf.keyfile, "csrf-keyfile", "", "./csrf.key", "path to csrf key file")
-	rootCmd.PersistentFlags().BoolVarP(&cfg.csrf.insecure, "csrf-insecure", "", false, "send csrf cookie over http")
-	rootCmd.PersistentFlags().StringVarP(&cfg.git.url, "git-url", "", "", "url to git repository")
-	rootCmd.PersistentFlags().BoolVarP(&cfg.git.push, "git-push", "", true, "push to git repository")
+	rootCmd.Flags().StringVarP(&cfgFile, "config", "c", "", "path to config file")
 
 	viper.SetEnvKeyReplacer(strings.NewReplacer("-", "_"))
 
-	viper.BindPFlag("bind", rootCmd.PersistentFlags().Lookup("bind"))
-	viper.BindPFlag("brand", rootCmd.PersistentFlags().Lookup("brand"))
-	viper.BindPFlag("data", rootCmd.PersistentFlags().Lookup("data"))
-	viper.BindPFlag("indexdir", rootCmd.PersistentFlags().Lookup("indexdir"))
-	viper.BindPFlag("csrf-keyfile", rootCmd.PersistentFlags().Lookup("csrf-keyfile"))
-	viper.BindPFlag("csrf-insecure", rootCmd.PersistentFlags().Lookup("csrf-insecure"))
-	viper.BindPFlag("git-url", rootCmd.PersistentFlags().Lookup("git-url"))
-	viper.BindPFlag("git-push", rootCmd.PersistentFlags().Lookup("git-push"))
+	viper.SetDefault("bind", "0.0.0.0:8000")
+	viper.SetDefault("brand", "Wiki")
+	viper.SetDefault("csrf-keyfile", "./csrf.key")
+	viper.SetDefault("csrf-insecure", false)
+	viper.SetDefault("data", "./data")
+	viper.SetDefault("git-push", true)
+	viper.SetDefault("git-url", "")
+	viper.SetDefault("indexdir", "./riot-index")
 
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
