@@ -35,7 +35,8 @@ func main() {
 
 	viper.SetEnvKeyReplacer(strings.NewReplacer("-", "_"))
 
-	viper.SetDefault("bind", "0.0.0.0:8000")
+	viper.SetDefault("listen-address", "0.0.0.0:8000")
+	viper.SetDefault("listen-network", "tcp")
 	viper.SetDefault("brand", "Wiki")
 	viper.SetDefault("csrf-keyfile", "./csrf.key")
 	viper.SetDefault("csrf-insecure", false)
@@ -65,7 +66,8 @@ func initConfig() {
 
 	}
 
-	cfg.bind = viper.GetString("bind")
+	cfg.listen.address = viper.GetString("listen-address")
+	cfg.listen.network = viper.GetString("listen-network")
 	cfg.brand = viper.GetString("brand")
 	cfg.data = viper.GetString("data")
 	cfg.indexdir = viper.GetString("indexdir")

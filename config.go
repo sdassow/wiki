@@ -13,8 +13,14 @@ type Csrf struct {
 	key      []byte
 }
 
+type Listen struct {
+	address string
+	network string
+}
+
 // Config ...
 type Config struct {
+	listen   Listen
 	data     string
 	brand    string
 	bind     string

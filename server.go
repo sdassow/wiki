@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"errors"
+	"net"
 	"fmt"
 	"html/template"
 	"io"
@@ -466,9 +467,14 @@ func (s *Server) Protect(h httprouter.Handle) http.Handler {
 
 // ListenAndServe ...
 func (s *Server) ListenAndServe() {
+	lsn, err := net.Listen(s.config.listen.network, s.config.listen.address)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	log.Fatal(
-		http.ListenAndServe(
-			s.config.bind,
+		http.Serve(
+			lsn,
 			s.logger.Handler(
 				s.stats.Handler(s.router),
 			),
