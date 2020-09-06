@@ -20,9 +20,9 @@ The configuration options are as follows:
  * `brand string` - branding at top of each page (default `Wiki`)
  * `csrf-insecure bool` - send csrf cookie over http (default `false`)
  * `csrf-keyfile string` - path to csrf key file (default `./csrf.key`)
- * `data dir` - data storage directory (default `./data`)
- * `git-push` - enable push on commit, disabled by default
- * `git-url url` - git repository to pull from (and push to), disabled by default
+ * `data string` - data storage directory (default `./data`)
+ * `git-push bool` - enable push on commit, disabled by default
+ * `git-url string` - git repository to pull from (and push to), disabled by default
  * `indexdir string` - path to search index directory (default `./riot-index`)
 
 ## License
