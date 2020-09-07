@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"errors"
-	"net"
 	"fmt"
 	"html/template"
 	"io"
@@ -11,7 +10,9 @@ import (
 	"log"
 	"math/rand"
 	"mime/multipart"
+	"net"
 	"net/http"
+	"net/http/fcgi"
 	"net/url"
 	"os"
 	"path"
@@ -467,19 +468,29 @@ func (s *Server) Protect(h httprouter.Handle) http.Handler {
 
 // ListenAndServe ...
 func (s *Server) ListenAndServe() {
-	lsn, err := net.Listen(s.config.listen.network, s.config.listen.address)
+	var lsn net.Listener = nil
+	var err error
+
+	if s.config.listen.network != "stdio" {
+		_ = os.Remove(s.config.listen.address)
+		lsn, err = net.Listen(s.config.listen.network, s.config.listen.address)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+
+	if s.config.listen.protocol == "fcgi" {
+		err = fcgi.Serve(lsn, s.logger.Handler(s.stats.Handler(s.router)))
+	} else {
+		if s.config.listen.network == "stdio" {
+			log.Fatal("http over stdio not supported")
+		}
+		err = http.Serve(lsn, s.logger.Handler(s.stats.Handler(s.router)))
+	}
+
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	log.Fatal(
-		http.Serve(
-			lsn,
-			s.logger.Handler(
-				s.stats.Handler(s.router),
-			),
-		),
-	)
 }
 
 func (s *Server) initRoutes() {

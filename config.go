@@ -14,8 +14,9 @@ type Csrf struct {
 }
 
 type Listen struct {
-	address string
-	network string
+	address  string
+	network  string
+	protocol string
 }
 
 // Config ...

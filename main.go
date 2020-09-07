@@ -19,7 +19,7 @@ func main() {
 	var rootCmd = &cobra.Command{
 		Use: "wiking",
 		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Printf("Starting on %s...\n", cfg.bind)
+			fmt.Printf("Listening on %s (%s/%s)...\n", cfg.listen.address, cfg.listen.network, cfg.listen.protocol)
 
 			srv, err := NewServer(cfg)
 			if err != nil {
@@ -37,6 +37,7 @@ func main() {
 
 	viper.SetDefault("listen-address", ":8000")
 	viper.SetDefault("listen-network", "tcp")
+	viper.SetDefault("listen-protocol", "http")
 	viper.SetDefault("brand", "Wiki")
 	viper.SetDefault("csrf-keyfile", "./csrf.key")
 	viper.SetDefault("csrf-insecure", false)
@@ -68,6 +69,7 @@ func initConfig() {
 
 	cfg.listen.address = viper.GetString("listen-address")
 	cfg.listen.network = viper.GetString("listen-network")
+	cfg.listen.protocol = viper.GetString("listen-protocol")
 	cfg.brand = viper.GetString("brand")
 	cfg.data = viper.GetString("data")
 	cfg.indexdir = viper.GetString("indexdir")
