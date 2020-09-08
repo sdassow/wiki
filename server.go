@@ -196,11 +196,13 @@ func (s *Server) render(name string, w http.ResponseWriter, ctx interface{}) {
 	buf, err := s.templates.Exec(name, ctx)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 
 	_, err = buf.WriteTo(w)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 }
 
