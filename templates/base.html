@@ -107,8 +107,10 @@
     var url = "{{ $prefix }}/search";
     var searchValue = document.getElementById("search").value
     var params = "search=" + encodeURIComponent(searchValue);
+    let csrfToken = document.getElementsByName("gorilla.csrf.Token")[0].value;
     xReq.open("POST", url, true);
     xReq.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xReq.setRequestHeader('X-CSRF-Token', csrfToken);
     xReq.addEventListener("load", onSearchComplete)
     xReq.addEventListener("error", onSearchError)
     xReq.send(params);
