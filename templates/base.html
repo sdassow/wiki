@@ -104,7 +104,7 @@
 
   function onSearch() {
     var xReq = new XMLHttpRequest();
-    var url = "/search";
+    var url = "{{ $prefix }}/search";
     var searchValue = document.getElementById("search").value
     var params = "search=" + encodeURIComponent(searchValue);
     xReq.open("POST", url, true);
