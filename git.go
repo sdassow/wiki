@@ -27,19 +27,32 @@ type commit struct {
 	message   string
 }
 
-func newRepo(url string, dir string) (*Repo, error) {
-	// try to open existing repo
+func newRepo(repo string, dir string) (*Repo, error) {
+	// open existing working copy
 	r, err := git.PlainOpen(dir)
 	if err != nil {
 		if !errors.Is(err, git.ErrRepositoryNotExists) {
-			log.Println("open existing repo:", dir, err)
+			log.Println("failed to open existing repository:", dir, err)
 			return nil, err
 		}
-		log.Println("cloning repo:", url)
-		r, err = git.PlainClone(dir, false, &git.CloneOptions{URL: url})
+
+		// clone repo from url
+		log.Println("cloning repository:", repo)
+
+		r, err = git.PlainClone(dir, false, &git.CloneOptions{URL: repo})
 		if err != nil {
-			log.Println("clone repo:", dir, err)
-			return nil, err
+			if err.Error() != "repository not found" {
+				log.Println("failed to clone repository:", repo, ":", err)
+				return nil, err
+			}
+
+			log.Println("initialize new local repository:", dir)
+
+			// if it's local we can create a new repo
+			r, err = git.PlainInit(dir, false)
+			if err != nil {
+				return nil, err
+			}
 		}
 	}
 	w, err := r.Worktree()
@@ -123,8 +136,10 @@ func (r *Repo) Save(filename string, co *commit, push bool) error {
 
 	if push {
 		if err := r.r.Push(&git.PushOptions{}); err != nil {
-			log.Println("push:", err)
-			return err
+			if err.Error() != "remote not found" {
+				log.Println("push:", err)
+				return err
+			}
 		}
 	}
 
