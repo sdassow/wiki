@@ -35,7 +35,7 @@ func newRepo(url string, dir string) (*Repo, error) {
 			log.Println("open existing repo:", dir, err)
 			return nil, err
 		}
-		log.Println("clone repo...", url)
+		log.Println("cloning repo:", url)
 		r, err = git.PlainClone(dir, false, &git.CloneOptions{URL: url})
 		if err != nil {
 			log.Println("clone repo:", dir, err)
