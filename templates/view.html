@@ -65,7 +65,7 @@
 	}
 	dropzone.ondrop = function(ev) {
 		const files = ev.dataTransfer.files;
-		doUpload('/file/{{.Title}}', files);
+		doUpload('{{ $prefix }}/file/{{.Title}}', files);
 	}
 })();
 </script>
