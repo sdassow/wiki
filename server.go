@@ -49,6 +49,7 @@ type Page struct {
 	Date  time.Time
 	Files []ListFile
 	CSRF  template.HTML
+	Prefix string
 }
 
 // make sure user input path does not leave the directory
@@ -205,10 +206,15 @@ func (s *Server) render(name string, w http.ResponseWriter, ctx interface{}) {
 
 // IndexHandler ...
 func (s *Server) IndexHandler() httprouter.Handle {
+	prefix := "."
+	if s.config.prefix != "" {
+		prefix = s.config.prefix
+	}
+
 	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		s.counters.Inc("n_index")
 
-		u, err := url.Parse(fmt.Sprintf("./view/FrontPage"))
+		u, err := url.Parse(fmt.Sprintf("%s/view/FrontPage", prefix))
 		if err != nil {
 			http.Error(w, "Internal Error", http.StatusInternalServerError)
 		}
@@ -236,6 +242,7 @@ func (s *Server) EditHandler() httprouter.Handle {
 		}
 
 		page.CSRF = csrf.TemplateField(r)
+		page.Prefix = s.config.prefix
 
 		s.render("edit", w, page)
 	}
@@ -304,6 +311,7 @@ func (s *Server) ViewHandler() httprouter.Handle {
 		}
 
 		page.CSRF = csrf.TemplateField(r)
+		page.Prefix = s.config.prefix
 
 		s.render("view", w, page)
 	}
@@ -466,6 +474,14 @@ func (s *Server) Protect(h httprouter.Handle) http.Handler {
 	}))
 }
 
+type StripPrefix struct {
+	Prefix string
+}
+
+func (sp StripPrefix) Handler(h http.Handler) http.Handler {
+	return http.StripPrefix(sp.Prefix, h)
+}
+
 // ListenAndServe ...
 func (s *Server) ListenAndServe() {
 	var lsn net.Listener = nil
@@ -479,13 +495,15 @@ func (s *Server) ListenAndServe() {
 		}
 	}
 
+	handler := StripPrefix{s.config.prefix}.Handler(s.logger.Handler(s.stats.Handler(s.router)))
+
 	if s.config.listen.protocol == "fcgi" {
-		err = fcgi.Serve(lsn, s.logger.Handler(s.stats.Handler(s.router)))
+		err = fcgi.Serve(lsn, handler)
 	} else {
 		if s.config.listen.network == "stdio" {
 			log.Fatal("http over stdio not supported")
 		}
-		err = http.Serve(lsn, s.logger.Handler(s.stats.Handler(s.router)))
+		err = http.Serve(lsn, handler)
 	}
 
 	if err != nil {

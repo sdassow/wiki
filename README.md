@@ -25,7 +25,8 @@ The configuration options are as follows:
  * `indexdir string` - path to search index directory (default `./riot-index`)
  * `listen-address string` - address to bind to (default `:8000`)
  * `listen-network string` - network can be "tcp", "tcp4", "tcp6", "unix" or "unixpacket" (default `tcp`)
- * `listen-protocol string` - network can be "fcgi" or "http" (default `http`)
+ * `listen-protocol string` - protocol can be "fcgi" or "http" (default `http`)
+ * `prefix string` - URL prefix for access via a sub-path, empty by default
 
 ## License
 

@@ -1,12 +1,14 @@
 {{define "stylesheets"}}
-<link rel="stylesheet" href="/css/fontawesome.min.css">
-<link rel="stylesheet" href="/css/easymde.min.css">
+{{ $prefix := .Prefix }}
+<link rel="stylesheet" href="{{ $prefix }}/css/fontawesome.min.css">
+<link rel="stylesheet" href="{{ $prefix }}/css/easymde.min.css">
 {{end}}
 {{define "content"}}
+{{ $prefix := .Prefix }}
 <section class="container">
   <div class="columns">
     <div class="column">
-      <form action="/save/{{.Title}}" method="POST">
+      <form action="{{ $prefix }}/save/{{.Title}}" method="POST">
         {{ .CSRF }}
         <div class="form-group">
           <label class="form-label" for="input-body">Editing: {{.Title}}</label>
@@ -18,7 +20,7 @@
         </div>
         <div class="form-group">
           <button class="btn btn-sm btn-primary" type="submit">Save</button>
-          <a class="btn btn-sm btn-link" href="/view/{{.Title}}">Cancel</a>
+          <a class="btn btn-sm btn-link" href="{{ $prefix }}/view/{{.Title}}">Cancel</a>
         </div>
       </form>
     </div>
@@ -26,7 +28,8 @@
 </section>
 {{end}}
 {{define "scripts"}}
-<script src="/js/easymde.min.js"></script>
+{{ $prefix := .Prefix }}
+<script src="{{ $prefix }}/js/easymde.min.js"></script>
 <script>
 (function() {
   var simplemde = new EasyMDE({
@@ -45,7 +48,7 @@
       uploadImage: true,
       imageUploadFunction: function(file, onSuccess, onError) {
           console.log('upload image...', file);
-          doUpload('/file/{{.Title}}', [file], onSuccess, onError);
+          doUpload('{{ $prefix }}/file/{{.Title}}', [file], onSuccess, onError);
       },
   });
 })();

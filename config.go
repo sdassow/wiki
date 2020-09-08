@@ -22,6 +22,7 @@ type Listen struct {
 // Config ...
 type Config struct {
 	listen   Listen
+	prefix	string
 	data     string
 	brand    string
 	bind     string

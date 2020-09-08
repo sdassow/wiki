@@ -45,6 +45,7 @@ func main() {
 	viper.SetDefault("git-push", true)
 	viper.SetDefault("git-url", "")
 	viper.SetDefault("indexdir", "./riot-index")
+	viper.SetDefault("prefix", "")
 
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
@@ -77,4 +78,5 @@ func initConfig() {
 	cfg.csrf.insecure = viper.GetBool("csrf-insecure")
 	cfg.git.url = viper.GetString("git-url")
 	cfg.git.push = viper.GetBool("git-push")
+	cfg.prefix = viper.GetString("prefix")
 }

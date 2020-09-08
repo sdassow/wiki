@@ -1,15 +1,16 @@
 {{define "base"}}
+{{ $prefix := .Prefix }}
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-  <link rel="stylesheet" href="/css/spectre-icons.min.css">
-  <link rel="stylesheet" href="/css/spectre.min.css">
-  <link rel="apple-touch-icon" sizes="180x180" href="/f/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/f/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/f/favicon-16x16.png">
-  <link rel="manifest" href="/f/site.webmanifest">
-  <link rel="mask-icon" href="/f/safari-pinned-tab.svg" color="#23c5ff">
+  <link rel="stylesheet" href="{{ $prefix }}/css/spectre-icons.min.css">
+  <link rel="stylesheet" href="{{ $prefix }}/css/spectre.min.css">
+  <link rel="apple-touch-icon" sizes="180x180" href="{{ $prefix }}/f/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="{{ $prefix }}/f/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="{{ $prefix }}/f/favicon-16x16.png">
+  <link rel="manifest" href="{{ $prefix }}/f/site.webmanifest">
+  <link rel="mask-icon" href="{{ $prefix }}/f/safari-pinned-tab.svg" color="#23c5ff">
   <meta name="msapplication-TileColor" content="#23c5ff">
   <meta name="theme-color" content="#23c5ff">
   {{ template "stylesheets" . }}
@@ -23,7 +24,7 @@
   <section class="container grid-960 mt-10">
     <header class="navbar">
       <section class="navbar-section">
-        <a href="/" class="navbar-brand mr-10">{{.Brand}}</a>
+        <a href="{{ $prefix }}/" class="navbar-brand mr-10">{{.Brand}}</a>
       </section>
       <section class="navbar-section">
         <div class="input-group input-inline">
@@ -90,7 +91,7 @@
         var cardBody = document.createElement("div")
         cardBody.classList.add("card-body")
         var lnk = document.createElement("a")        
-        lnk.href = hit.Page
+        lnk.href = '{{ $prefix }}' + hit.Page
         lnk.title = hit.Title
         lnk.appendChild(document.createTextNode(hit.Title))
         cardBody.appendChild(lnk)
