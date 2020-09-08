@@ -28,6 +28,23 @@ The configuration options are as follows:
  * `listen-protocol string` - protocol can be "fcgi" or "http" (default `http`)
  * `prefix string` - URL prefix for access via a sub-path, empty by default
 
+## Design
+
+ - The data directory is a working copy of a git repository, and not existent on startup, a checkout of the git repository is done
+ - All wiki pages are stored inside the data directory in markdown format
+ - Attachments are stored per markdown file in a directory without the mardown file extension
+ - The fulltext search index is stored in a separate index directory
+ - For CSRF protection a key file is used, and a random key file is generated if none exists on startup
+
+The resulting top level directory view is:
+```
+./data/
+      + FrontPage.md
+      + FrontPage/...
+./riot-index/...
+./csrf.key
+```
+
 ## License
 
 MIT
