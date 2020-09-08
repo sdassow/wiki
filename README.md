@@ -30,7 +30,7 @@ The configuration options are as follows:
 
 ## Design
 
- - The data directory is a working copy of a git repository, and not existent on startup, a checkout of the git repository is done
+ - The data directory is a working copy of a git repository, and if not existent on startup, a checkout of the git repository is done
  - All wiki pages are stored inside the data directory in markdown format
  - Attachments are stored per markdown file in a directory without the mardown file extension
  - The fulltext search index is stored in a separate index directory
