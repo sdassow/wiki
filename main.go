@@ -46,6 +46,9 @@ func main() {
 	viper.SetDefault("git-url", "")
 	viper.SetDefault("indexdir", "./riot-index")
 	viper.SetDefault("prefix", "")
+	viper.SetDefault("tls-hosts", []string{"localhost","127.0.0.1"})
+	viper.SetDefault("tls-certfile", "")
+	viper.SetDefault("tls-keyfile", "")
 
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
@@ -79,4 +82,7 @@ func initConfig() {
 	cfg.git.url = viper.GetString("git-url")
 	cfg.git.push = viper.GetBool("git-push")
 	cfg.prefix = viper.GetString("prefix")
+	cfg.tls.hosts = viper.GetStringSlice("tls-hosts")
+	cfg.tls.certfile = viper.GetString("tls-certfile")
+	cfg.tls.keyfile = viper.GetString("tls-keyfile")
 }

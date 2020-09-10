@@ -19,14 +19,21 @@ type Listen struct {
 	protocol string
 }
 
+type Tls struct {
+	hosts    []string
+	certfile string
+	keyfile  string
+}
+
 // Config ...
 type Config struct {
 	listen   Listen
-	prefix	string
+	prefix   string
 	data     string
 	brand    string
 	bind     string
 	git      Git
 	csrf     Csrf
 	indexdir string
+	tls      Tls
 }
