@@ -511,24 +511,19 @@ func (s *Server) ListenAndServe() {
 		}
 
 		if s.config.listen.protocol == "https" {
-			if s.config.tls.certfile != "" && s.config.tls.keyfile != "" {
-				log.Printf("Loading TLS config from %v / %v", s.config.tls.certfile, s.config.tls.keyfile)
-
-				srv.TLSConfig, err = s.loadTLSConfig(s.config.tls.certfile, s.config.tls.keyfile)
-				if err != nil {
-					log.Fatal("Failed to load TLS config:", err)
-				}
-			} else {
+			if s.config.tls.certfile == "" && s.config.tls.keyfile == "" {
 				log.Printf("Generating TLS config for %v", s.config.tls.hosts)
 
 				srv.TLSConfig, err = s.generateTLSConfig(s.config.tls.hosts)
 				if err != nil {
 					log.Fatal("Failed to generate TLS config:", err)
 				}
+			} else {
+				log.Printf("Loading TLS config from %v / %v", s.config.tls.certfile, s.config.tls.keyfile)
 			}
 
 			// use empty cert/key to avoid opening files and use the manual config instead
-			err = srv.ServeTLS(lsn, "", "")
+			err = srv.ServeTLS(lsn, s.config.tls.certfile, s.config.tls.keyfile)
 		} else {
 			err = srv.Serve(lsn)
 		}
