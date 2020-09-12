@@ -22,7 +22,7 @@ The configuration options are as follows:
  * `data string` - data storage directory (default `./data`)
  * `git-push bool` - enable push on commit, disabled by default
  * `git-url string` - git repository to pull from (and push to), disabled by default
- * `hosts list-of-strings` - hostnames to allow requests to, protecting against dns rebind attacks, and used for dynamic TLS certificate when no certificate and keyfile was provided, defaults to `localhost` and `127.0.0.1`
+ * `hosts list-of-strings` - hostnames to allow requests to, protecting against dns rebind attacks, and used for dynamic TLS certificate when protocol is "https" and no certificate and keyfile was provided, defaults to `localhost` and `127.0.0.1`
  * `indexdir string` - path to search index directory (default `./riot-index`)
  * `listen-address string` - address to bind to (default `:8000`)
  * `listen-network string` - network can be "tcp", "tcp4", "tcp6", "unix" or "unixpacket" (default `tcp`)
