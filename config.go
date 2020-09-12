@@ -20,7 +20,6 @@ type Listen struct {
 }
 
 type Tls struct {
-	hosts    []string
 	certfile string
 	keyfile  string
 }
@@ -36,4 +35,5 @@ type Config struct {
 	csrf     Csrf
 	indexdir string
 	tls      Tls
+	hosts    []string
 }

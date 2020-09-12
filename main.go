@@ -44,9 +44,9 @@ func main() {
 	viper.SetDefault("data", "./data")
 	viper.SetDefault("git-push", true)
 	viper.SetDefault("git-url", "")
+	viper.SetDefault("hosts", []string{"localhost","127.0.0.1"})
 	viper.SetDefault("indexdir", "./riot-index")
 	viper.SetDefault("prefix", "")
-	viper.SetDefault("tls-hosts", []string{"localhost","127.0.0.1"})
 	viper.SetDefault("tls-certfile", "")
 	viper.SetDefault("tls-keyfile", "")
 
@@ -81,8 +81,8 @@ func initConfig() {
 	cfg.csrf.insecure = viper.GetBool("csrf-insecure")
 	cfg.git.url = viper.GetString("git-url")
 	cfg.git.push = viper.GetBool("git-push")
+	cfg.hosts = viper.GetStringSlice("hosts")
 	cfg.prefix = viper.GetString("prefix")
-	cfg.tls.hosts = viper.GetStringSlice("tls-hosts")
 	cfg.tls.certfile = viper.GetString("tls-certfile")
 	cfg.tls.keyfile = viper.GetString("tls-keyfile")
 }

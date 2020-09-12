@@ -484,6 +484,31 @@ func (sp StripPrefix) Handler(h http.Handler) http.Handler {
 	return http.StripPrefix(sp.Prefix, h)
 }
 
+type RebindProtector struct {
+	Hostnames	[]string
+}
+
+func (rp RebindProtector) Handler(h http.Handler) http.Handler {
+	hostnames := make(map[string]bool)
+
+	for _, hostname := range rp.Hostnames {
+		k := strings.ToLower(hostname)
+		hostnames[k] = true
+	}
+
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		hostname := strings.ToLower(strings.TrimRight(r.Host, ":0123456789"))
+
+		if _, found := hostnames[hostname]; !found {
+			log.Printf("Failed to find host: %s", hostname)
+			http.Error(w, "Unknown hostname", http.StatusInternalServerError)
+			return
+		}
+
+		h.ServeHTTP(w, r)
+	})
+}
+
 // ListenAndServe ...
 func (s *Server) ListenAndServe() {
 	var lsn net.Listener = nil
@@ -497,7 +522,8 @@ func (s *Server) ListenAndServe() {
 		}
 	}
 
-	handler := StripPrefix{s.config.prefix}.Handler(s.logger.Handler(s.stats.Handler(s.router)))
+	stripped := StripPrefix{s.config.prefix}.Handler(s.logger.Handler(s.stats.Handler(s.router)))
+	handler := RebindProtector{s.config.hosts}.Handler(stripped)
 
 	if s.config.listen.protocol == "fcgi" {
 		err = fcgi.Serve(lsn, handler)
@@ -512,9 +538,9 @@ func (s *Server) ListenAndServe() {
 
 		if s.config.listen.protocol == "https" {
 			if s.config.tls.certfile == "" && s.config.tls.keyfile == "" {
-				log.Printf("Generating TLS config for %v", s.config.tls.hosts)
+				log.Printf("Generating TLS config for %v", s.config.hosts)
 
-				srv.TLSConfig, err = s.generateTLSConfig(s.config.tls.hosts)
+				srv.TLSConfig, err = s.generateTLSConfig(s.config.hosts)
 				if err != nil {
 					log.Fatal("Failed to generate TLS config:", err)
 				}
