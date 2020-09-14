@@ -26,7 +26,6 @@ import (
 )
 
 var (
-	validPage = regexp.MustCompile("([A-Z][a-z]+[A-Z][a-zA-Z]+)")
 	validPath = regexp.MustCompile("^/(edit|save|view)/([a-zA-Z0-9]+)$")
 )
 
@@ -53,10 +52,7 @@ func LoadPage(title string, config Config, baseurl *url.URL) (*Page, error) {
 
 	// Process and Parse the Markdown content
 	// Also automatically replace CamelCase page identifiers as links
-	markdown := validPage.ReplaceAll(
-		body,
-		[]byte(fmt.Sprintf("[$1](%s$1)", baseurl.String())),
-	)
+	markdown := AutoCamelCase(body, baseurl.String())
 
 	unsafe := blackfriday.MarkdownCommon(markdown)
 	html := bluemonday.UGCPolicy().SanitizeBytes(unsafe)
