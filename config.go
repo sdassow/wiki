@@ -7,7 +7,7 @@ type Git struct {
 	push bool
 }
 
-type Csrf struct {
+type Cookie struct {
 	keyfile  string
 	insecure bool
 	key      []byte
@@ -32,7 +32,7 @@ type Config struct {
 	brand    string
 	bind     string
 	git      Git
-	csrf     Csrf
+	cookie	 Cookie
 	indexdir string
 	tls      Tls
 	hosts    []string

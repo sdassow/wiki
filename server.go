@@ -465,9 +465,9 @@ func (s *Server) SearchHandler() httprouter.Handle {
 
 func (s *Server) Protect(h httprouter.Handle) http.Handler {
 	protect := csrf.Protect(
-		s.config.csrf.key,
-		csrf.Secure(!s.config.csrf.insecure),
-		csrf.Path("/"),
+		s.config.cookie.key,
+		csrf.Secure(!s.config.cookie.insecure),
+		csrf.Path(s.config.prefix + "/"),
 	)
 
 	return protect(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -591,22 +591,22 @@ func NewServer(config Config) (*Server, error) {
 		repo = r
 	}
 
-	if config.csrf.keyfile != "" {
-		b, err := ioutil.ReadFile(config.csrf.keyfile)
+	if config.cookie.keyfile != "" {
+		b, err := ioutil.ReadFile(config.cookie.keyfile)
 		if err != nil && !os.IsNotExist(err) {
 			return nil, err
 		}
 		if b == nil {
-			log.Printf("csrf key file not found, generating new one: %s", config.csrf.keyfile)
+			log.Printf("Failed to find cookie keyfile, generating new one: %s", config.cookie.keyfile)
 			b = make([]byte, 32)
 			rand.Seed(time.Now().UnixNano())
 			rand.Read(b)
-			if err := ioutil.WriteFile(config.csrf.keyfile, b, 0600); err != nil {
+			if err := ioutil.WriteFile(config.cookie.keyfile, b, 0600); err != nil {
 				return nil, err
 			}
 		}
-		log.Printf("using csrf keyfile: %s", config.csrf.keyfile)
-		config.csrf.key = b
+		log.Printf("Using cookie keyfile: %s", config.cookie.keyfile)
+		config.cookie.key = b
 	}
 
 	server := &Server{

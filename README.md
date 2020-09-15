@@ -17,8 +17,8 @@ This can be changed with environment variables or a configuration file.
 The configuration options are as follows:
 
  * `brand string` - branding at top of each page (default `Wiki`)
- * `csrf-insecure bool` - send csrf cookie over http (default `false`)
- * `csrf-keyfile string` - path to csrf key file (default `./csrf.key`)
+ * `cookie-insecure bool` - send cookies over http (default `false`)
+ * `cookie-keyfile string` - path to cookie keyfile (default `./cookie.key`)
  * `data string` - data storage directory (default `./data`)
  * `git-push bool` - enable push on commit, disabled by default
  * `git-url string` - git repository to pull from (and push to), disabled by default
