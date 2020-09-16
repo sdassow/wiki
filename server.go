@@ -271,6 +271,11 @@ func (s *Server) initRoutes() {
 		rice.MustFindBox("static/js").HTTPBox(),
 	)
 
+	s.router.ServeFiles(
+		"/webfonts/*filepath",
+		rice.MustFindBox("static/webfonts").HTTPBox(),
+	)
+
 	s.router.GET("/", s.IndexHandler())
 	s.router.GET("/view/:title", s.ViewHandler())
 	s.router.GET("/edit/:title", s.EditHandler())

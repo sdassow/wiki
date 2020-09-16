@@ -1,4 +1,5 @@
 {{define "stylesheets"}}
+<link rel="stylesheet" href="/css/fontawesome.min.css">
 <link rel="stylesheet" href="/css/easymde.min.css">
 {{end}}
 {{define "content"}}
@@ -36,6 +37,7 @@ $(document).ready(function() {
       indentWithTabs: false,
       promptURLs: true,
       tabSize: 4,
+      autoDownloadFontAwesome: false,
   });
 });
 </script>
