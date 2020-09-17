@@ -267,6 +267,11 @@ func (s *Server) initRoutes() {
 	)
 
 	s.router.ServeFiles(
+		"/data/*filepath",
+		rice.MustFindBox("static/data").HTTPBox(),
+	)
+
+	s.router.ServeFiles(
 		"/js/*filepath",
 		rice.MustFindBox("static/js").HTTPBox(),
 	)
