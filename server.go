@@ -565,6 +565,7 @@ func (s *Server) initRoutes() {
 	s.router.GET("/debug/stats", s.StatsHandler())
 
 	s.router.ServeFiles("/css/*filepath", rice.MustFindBox("static/css").HTTPBox())
+	s.router.ServeFiles("/data/*filepath", rice.MustFindBox("static/data").HTTPBox())
 	s.router.ServeFiles("/js/*filepath", rice.MustFindBox("static/js").HTTPBox())
 	s.router.ServeFiles("/webfonts/*filepath", rice.MustFindBox("static/webfonts").HTTPBox())
 	s.router.ServeFiles("/f/*filepath", rice.MustFindBox("static/favicon").HTTPBox())
