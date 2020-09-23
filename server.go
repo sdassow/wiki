@@ -522,8 +522,10 @@ func (s *Server) ListenAndServe() {
 		}
 	}
 
-	stripped := StripPrefix{s.config.prefix}.Handler(s.logger.Handler(s.stats.Handler(s.router)))
-	handler := RebindProtector{s.config.hosts}.Handler(stripped)
+	handler := StripPrefix{s.config.prefix}.Handler(s.logger.Handler(s.stats.Handler(s.router)))
+	if len(s.config.hosts) > 0 {
+		handler = RebindProtector{s.config.hosts}.Handler(handler)
+	}
 
 	if s.config.listen.protocol == "fcgi" {
 		err = fcgi.Serve(lsn, handler)
