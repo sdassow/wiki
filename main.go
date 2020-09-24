@@ -59,6 +59,7 @@ func main() {
 func initConfig() {
 	// Read in environment variables with prefix WIKING_
 	viper.SetEnvPrefix("WIKING")
+	viper.AllowEmptyEnv(true)
 	viper.AutomaticEnv()
 
 	if cfgFile != "" {
