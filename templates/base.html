@@ -24,7 +24,9 @@
   <section class="container grid-960 mt-10">
     <header class="navbar">
       <section class="navbar-section">
-        <a href="{{ $prefix }}/" class="navbar-brand mr-10">{{.Brand}}</a>
+        <a href="{{ $prefix }}/" class="navbar-brand">{{.Brand}}</a>
+        <span class="navbar-brand mr-5">: </span>
+        <a href="{{ $prefix }}/view/{{.Title}}" class="navbar-brand">{{.Title}}</a>
       </section>
       <section class="navbar-section">
         <div class="input-group input-inline">
