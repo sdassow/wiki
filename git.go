@@ -103,24 +103,24 @@ func (r *Repo) Save(filename string, co *commit, push bool) error {
 
 	co = getCommitDefaults(co)
 
-	log.Println("adding file:", filename)
+	//log.Println("adding file:", filename)
 
-	blobHash, err := r.w.Add(filename)
+	_, err := r.w.Add(filename)
 	if err != nil {
 		log.Println("add file:", filename, err)
 		return err
 	}
-	log.Println("blobHash:", blobHash)
+	//log.Println("blobHash:", blobHash)
 
-	status, err := r.w.Status()
+	_, err = r.w.Status()
 	if err != nil {
 		log.Println("status:", err)
 		return err
 	}
 
-	log.Println("status:", status)
+	//log.Println("status:", status)
 
-	hash, err := r.w.Commit(co.message, &git.CommitOptions{
+	_, err = r.w.Commit(co.message, &git.CommitOptions{
 		Author: &object.Signature{
 			Name:  co.name,
 			Email: co.email,
@@ -132,7 +132,7 @@ func (r *Repo) Save(filename string, co *commit, push bool) error {
 		return err
 	}
 
-	log.Println("hash:", hash)
+	//log.Println("commit hash:", hash)
 
 	if push {
 		if err := r.r.Push(&git.PushOptions{}); err != nil {
