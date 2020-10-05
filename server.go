@@ -497,7 +497,10 @@ func (rp RebindProtector) Handler(h http.Handler) http.Handler {
 	}
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		hostname := strings.ToLower(strings.TrimRight(r.Host, ":0123456789"))
+		hostname := strings.ToLower(r.Host)
+		if n := strings.Index(hostname, ":"); n > -1 {
+			hostname = hostname[0:n]
+		}
 
 		if _, found := hostnames[hostname]; !found {
 			log.Printf("Failed to find host: %s", hostname)
