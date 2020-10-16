@@ -10,6 +10,17 @@ func TestAutoCamelCase(t *testing.T) {
 		out string
 	}{
 		{"WhatEver", "[WhatEver](/view/WhatEver)"},
+		{"/WhatEver/", "/WhatEver/"},
+		{"What/Ever", "What/Ever"},
+		{"What/EverEver", "[What/EverEver](/view/What/EverEver)"},
+		{"WhatEver, WhenEver", "[WhatEver](/view/WhatEver), [WhenEver](/view/WhenEver)"},
+		{"WhatEver! WhenEver", "[WhatEver](/view/WhatEver)! [WhenEver](/view/WhenEver)"},
+		{"WhatEver? WhenEver", "[WhatEver](/view/WhatEver)? [WhenEver](/view/WhenEver)"},
+		{"WhatEver% WhenEver", "[WhatEver](/view/WhatEver)% [WhenEver](/view/WhenEver)"},
+		{"WhatEver& WhenEver", "[WhatEver](/view/WhatEver)& [WhenEver](/view/WhenEver)"},
+		{"WhatEver/WhenEver", "[WhatEver/WhenEver](/view/WhatEver/WhenEver)"},
+		{"WhatEver/ WhenEver", "WhatEver/ [WhenEver](/view/WhenEver)"},
+		{"WhatEver / WhenEver", "[WhatEver](/view/WhatEver) / [WhenEver](/view/WhenEver)"},
 		{"fobar WhatEver bla", "fobar [WhatEver](/view/WhatEver) bla"},
 		{" - [OpenBSD Router : Native IPv6](https://lipidity.com/openbsd/router/) ",
 			" - [OpenBSD Router : Native IPv6](https://lipidity.com/openbsd/router/) "},
@@ -23,7 +34,7 @@ func TestAutoCamelCase(t *testing.T) {
 	for _, check := range checks {
 		out := AutoCamelCase([]byte(check.in), "/view/")
 		if string(out) != check.out {
-			t.Errorf("mismatch:\n  <%s>\n  !=\n  <%s>", out, check.out)
+			t.Errorf("mismatch:\n   got:<%s>\n  !=\n  want:<%s>", out, check.out)
 		}
 	}
 
