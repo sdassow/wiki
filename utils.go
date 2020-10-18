@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-var validPageRegex = regexp.MustCompile(`(^|[^A-Za-z0-9/\[])((?:[A-Z][A-Za-z0-9]+/)*[A-Z][a-z]+[A-Z][A-Za-z0-9]+)([^A-Za-z0-9/\]]|$)`)
+var validPageRegex = regexp.MustCompile(`(^|[\s.,!?%&])((?:[A-Z][A-Za-z0-9]+/)*[A-Z][a-z]+[A-Z][A-Za-z0-9]+)([\s.,!?%&]|$)`)
 
 func AutoCamelCase(body []byte, base string) []byte {
 	return validPageRegex.ReplaceAll(

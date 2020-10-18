@@ -29,6 +29,16 @@ func TestAutoCamelCase(t *testing.T) {
 		{"Foo/WhatEver", "[Foo/WhatEver](/view/Foo/WhatEver)"},
 		{"FooBar/WhatEver", "[FooBar/WhatEver](/view/FooBar/WhatEver)"},
 		{"Foo/Bar/What/Ever", "Foo/Bar/What/Ever"},
+		{`# Dishes
+
+- [Three Bean Salad](Food/ThreeBeanSalad)
+- [Twelve Marinades](Food/TwelveMarinades)
+- [Greek Lentil Salad](Food/GreekLentilSalad)`, `# Dishes
+
+- [Three Bean Salad](Food/ThreeBeanSalad)
+- [Twelve Marinades](Food/TwelveMarinades)
+- [Greek Lentil Salad](Food/GreekLentilSalad)`,
+		},
 	}
 
 	for _, check := range checks {
