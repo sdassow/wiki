@@ -73,9 +73,9 @@
   function onSearchComplete(event) {
     results = JSON.parse(this.responseText)
     if (results.Error != null) {
-      alert("Search Error: " + resutls.Error)
+      alert("Search Error: " + results.Error)
     } else if (results.Hits.length == 0) {
-      alert("No resuts")
+      alert("No results")
     } else {
       //TODO: show results with options to click
       //alert("Search Complete: " + results.Hits.length)
